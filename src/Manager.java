@@ -17,6 +17,11 @@ public class Manager {
     /** Список эпиков */
     private HashMap<Integer, Epic> epics;
 
+    public Manager() {
+        this.tasks = new HashMap<>();
+        this.epics = new HashMap<>();
+    }
+
     /**
      * Получить список всех задач
      * @return ArrayList<Task>
@@ -53,7 +58,7 @@ public class Manager {
      * Получить список всех подзадач
      * @return ArrayList<Subtask>
      */
-    public ArrayList<Subtask> getSubtask() {
+    public ArrayList<Subtask> getSubtasks() {
         ArrayList<Subtask> subtasks = new ArrayList<>();
         for (Map.Entry<Integer, Epic> epic : this.epics.entrySet()) {
             subtasks.addAll(this.getSubtaskByEpic(epic.getValue()));

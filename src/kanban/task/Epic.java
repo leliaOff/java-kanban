@@ -17,6 +17,7 @@ public class Epic extends Task {
      */
     public Epic(String title, String description) {
         super(title, description);
+        this.subtasks = new HashMap<>();
     }
 
     /**
@@ -74,22 +75,28 @@ public class Epic extends Task {
         this.refreshStatus();
     }
 
+    @Override
+    public void setStatus(Status status) {
+        // Закрыли ручное смену статуса
+    }
+
     /**
      * Обновить статус эпика
      */
     private void refreshStatus() {
-        if (this.subtasks.isEmpty() && this.status != Status.NEW) {
+        if (this.subtasks.isEmpty()) {
             this.status = Status.NEW;
+            return;
         }
-        if (this.subtasks.size() == this.getSubtasksByStatus(Status.NEW).size() && this.status != Status.NEW) {
+        if (this.subtasks.size() == this.getSubtasksByStatus(Status.NEW).size()) {
             this.status = Status.NEW;
+            return;
         }
-        if (this.subtasks.size() == this.getSubtasksByStatus(Status.DONE).size() && this.status != Status.DONE) {
+        if (this.subtasks.size() == this.getSubtasksByStatus(Status.DONE).size()) {
             this.status = Status.DONE;
+            return;
         }
-        if (this.status != Status.IN_PROGRESS) {
-            this.status = Status.IN_PROGRESS;
-        }
+        this.status = Status.IN_PROGRESS;
     }
 
     /**
