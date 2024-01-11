@@ -180,6 +180,10 @@ public class Manager {
      * Обновить эпик
      */
     public void updateEpic(Epic epic) {
+        Epic currentEpic = this.epics.get(epic.getId());
+        if (epic.getStatus() != currentEpic.getStatus()) {
+            epic.setStatus(currentEpic.getStatus());
+        }
         this.epics.put(epic.getId(), epic);
     }
 

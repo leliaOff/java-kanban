@@ -6,17 +6,17 @@ import java.util.Objects;
 public class Task {
 
     /** ID задачи */
-    private int id;
+    protected int id;
 
     /** Наименование */
-    private String title;
+    protected String title;
 
 
     /** Описание */
-    private String description;
+    protected String description;
 
     /** Статус */
-    private Status status;
+    protected Status status;
 
     /**
      * construct
@@ -36,6 +36,14 @@ public class Task {
 
     public int getId() {
         return this.id;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public Status getStatus() {
+        return this.status;
     }
 
     @Override
