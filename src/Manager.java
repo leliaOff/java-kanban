@@ -1,4 +1,5 @@
 import kanban.task.Epic;
+import kanban.task.Status;
 import kanban.task.Subtask;
 import kanban.task.Task;
 
@@ -8,7 +9,7 @@ import java.util.Map;
 
 public class Manager {
 
-    /** Последователдьность ИД */
+    /** Последовательность ИД */
     private static int sequenceId = 1;
 
     /** Список задач */
@@ -17,9 +18,13 @@ public class Manager {
     /** Список эпиков */
     private HashMap<Integer, Epic> epics;
 
+    /** Список подзадач */
+    private HashMap<Integer, Subtask> subtasks;
+
     public Manager() {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
+        this.subtasks = new HashMap<>();
     }
 
     /**
@@ -27,11 +32,7 @@ public class Manager {
      * @return ArrayList<Task>
      */
     public ArrayList<Task> getTasks() {
-        ArrayList<Task> tasks = new ArrayList<>();
-        for (Map.Entry<Integer, Task> task : this.tasks.entrySet()) {
-            tasks.add(task.getValue());
-        }
-        return tasks;
+        return new ArrayList<>(this.tasks.values());
     }
 
     /**
@@ -39,19 +40,7 @@ public class Manager {
      * @return ArrayList<Epic>
      */
     public ArrayList<Epic> getEpics() {
-        ArrayList<Epic> epics = new ArrayList<>();
-        for (Map.Entry<Integer, Epic> epic : this.epics.entrySet()) {
-            epics.add(epic.getValue());
-        }
-        return epics;
-    }
-
-    /**
-     * Получить список всех подзадач эпика
-     * @return ArrayList<Subtask>
-     */
-    public ArrayList<Subtask> getSubtaskByEpic(Epic epic) {
-        return epic.getSubtasks();
+        return new ArrayList<>(this.epics.values());
     }
 
     /**
@@ -59,11 +48,22 @@ public class Manager {
      * @return ArrayList<Subtask>
      */
     public ArrayList<Subtask> getSubtasks() {
-        ArrayList<Subtask> subtasks = new ArrayList<>();
-        for (Map.Entry<Integer, Epic> epic : this.epics.entrySet()) {
-            subtasks.addAll(this.getSubtaskByEpic(epic.getValue()));
+        return new ArrayList<>(this.subtasks.values());
+    }
+
+    /**
+     * Получить список всех подзадач эпика
+     * @return ArrayList<Subtask>
+     */
+    public ArrayList<Subtask> getSubtaskByEpic(Epic epic) {
+        ArrayList<Subtask> subtasks = this.getSubtasks();
+        ArrayList<Subtask> epicSubtasks = new ArrayList<>();
+        for (Subtask subtask : subtasks) {
+            if (subtask.getEpicId() == epic.getId()) {
+                epicSubtasks.add(subtask);
+            }
         }
-        return subtasks;
+        return epicSubtasks;
     }
 
     /**
@@ -72,6 +72,7 @@ public class Manager {
     public void removeAll() {
         this.removeAllTasks();
         this.removeAllEpics();
+        this.removeAllSubtasks();
     }
 
     /**
@@ -85,23 +86,31 @@ public class Manager {
      * Удалить все эпики
      */
     public void removeAllEpics() {
+        this.subtasks.clear();
         this.epics.clear();
-    }
-
-    /**
-     * Удалить все подзадачи эпика
-     */
-    public void removeAllSubtasksByEpic(Epic epic) {
-        epic.removeAllSubtasks();
     }
 
     /**
      * Удалить все подзадачи
      */
     public void removeAllSubtasks() {
+        this.subtasks.clear();
         for (Map.Entry<Integer, Epic> epic : this.epics.entrySet()) {
             epic.getValue().removeAllSubtasks();
+            this.refreshEpicStatus(epic.getValue());
         }
+    }
+
+    /**
+     * Удалить все подзадачи эпика
+     */
+    public void removeAllSubtasksByEpic(Epic epic) {
+        ArrayList<Subtask> subtasks = this.getSubtaskByEpic(epic);
+        for (Subtask subtask : subtasks) {
+            this.subtasks.remove(subtask.getId());
+        }
+        epic.removeAllSubtasks();
+        this.refreshEpicStatus(epic);
     }
 
     /**
@@ -123,27 +132,12 @@ public class Manager {
     }
 
     /**
-     * Поиск подзадачи эпика по ИД
-     *
-     * @return Subtask|null
-     */
-    public Subtask getSubtaskByEpic(int id, Epic epic) {
-        return epic.getSubtask(id);
-    }
-
-    /**
      * Поиск подзадачи по ИД
      *
      * @return Subtask|null
      */
     public Subtask getSubtask(int id) {
-        for (Map.Entry<Integer, Epic> epic : this.epics.entrySet()) {
-            Subtask subtask = this.getSubtaskByEpic(id, epic.getValue());
-            if (subtask != null) {
-                return subtask;
-            }
-        }
-        return null;
+        return this.subtasks.get(id);
     }
 
     /**
@@ -169,8 +163,10 @@ public class Manager {
      */
     public void addSubtaskByEpic(Subtask subtask, Epic epic) {
         subtask.setId(sequenceId);
-        subtask.setEpic(epic);
-        epic.addSubtask(sequenceId, subtask);
+        subtask.setEpicId(epic.getId());
+        this.subtasks.put(sequenceId, subtask);
+        epic.addSubtask(sequenceId);
+        this.refreshEpicStatus(epic);
         increaseSequenceId();
     }
 
@@ -196,7 +192,8 @@ public class Manager {
      * Обновить подзачу
      */
     public void updateSubtask(Subtask subtask) {
-        subtask.getEpic().updateSubtask(subtask);
+        this.subtasks.put(subtask.getId(), subtask);
+        this.refreshEpicStatus(this.getEpic(subtask.getEpicId()));
     }
 
     /**
@@ -212,15 +209,9 @@ public class Manager {
      * @param id
      */
     public void removeEpic(int id) {
+        Epic epic = this.getEpic(id);
+        this.removeAllSubtasksByEpic(epic);
         this.epics.remove(id);
-    }
-
-    /**
-     * Удалить подзадачу эпика по ИД
-     * @param id
-     */
-    public void removeSubtaskByEpic(int id, Epic epic) {
-        epic.removeSubtask(id);
     }
 
     /**
@@ -229,7 +220,45 @@ public class Manager {
      */
     public void removeSubtask(int id) {
         Subtask subtask = this.getSubtask(id);
-        this.removeSubtaskByEpic(id, subtask.getEpic());
+        Epic epic = this.getEpic(subtask.getEpicId());
+        epic.removeSubtask(id);
+        this.subtasks.remove(id);
+    }
+
+    /**
+     * Обновить статус эпика
+     */
+    private void refreshEpicStatus(Epic epic) {
+        ArrayList<Subtask> subtasks = this.getSubtaskByEpic(epic);
+        if (subtasks.isEmpty()) {
+            epic.setStatus(Status.NEW);
+            return;
+        }
+        if (subtasks.size() == this.getEpicSubtasksByStatus(epic, Status.NEW).size()) {
+            epic.setStatus(Status.NEW);
+            return;
+        }
+        if (subtasks.size() == this.getEpicSubtasksByStatus(epic, Status.DONE).size()) {
+            epic.setStatus(Status.DONE);
+            return;
+        }
+        epic.setStatus(Status.IN_PROGRESS);
+    }
+
+    /**
+     * Получить список подзадач эпика в опреденном статусе
+     * @param status
+     * @return
+     */
+    private ArrayList<Subtask> getEpicSubtasksByStatus(Epic epic, Status status) {
+        ArrayList<Subtask> subtasks = this.getSubtaskByEpic(epic);
+        ArrayList<Subtask> subtasksByStatus = new ArrayList<>();
+        for (Subtask subtask : subtasks) {
+            if (subtask.getStatus() == status) {
+                subtasksByStatus.add(subtask);
+            }
+        }
+        return subtasksByStatus;
     }
 
     /**

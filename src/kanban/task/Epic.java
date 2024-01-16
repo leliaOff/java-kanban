@@ -6,8 +6,8 @@ import java.util.Map;
 
 public class Epic extends Task {
 
-    /** Список подзадач */
-    private HashMap<Integer, Subtask> subtasks;
+    /** Список ID подзадач */
+    private ArrayList<Integer> subtaskIds;
 
     /**
      * construct
@@ -17,53 +17,21 @@ public class Epic extends Task {
      */
     public Epic(String title, String description) {
         super(title, description);
-        this.subtasks = new HashMap<>();
-    }
-
-    /**
-     * Получить все подзадачи
-     *
-     * @return ArrayList<Subtask>
-     */
-    public ArrayList<Subtask> getSubtasks() {
-        ArrayList<Subtask> subtasks = new ArrayList<>();
-        for (Map.Entry<Integer, Subtask> subtask : this.subtasks.entrySet()) {
-            subtasks.add(subtask.getValue());
-        }
-        return subtasks;
+        this.subtaskIds = new ArrayList<>();
     }
 
     /**
      * Удалить все подзадачи
      */
     public void removeAllSubtasks() {
-        this.subtasks.clear();
-        this.refreshStatus();
-    }
-
-    /**
-     * Поиск подзадачи по ИД
-     *
-     * @return Subtask|null
-     */
-    public Subtask getSubtask(int id) {
-        return this.subtasks.get(id);
+        this.subtaskIds.clear();
     }
 
     /**
      * Создать подзадачу
      */
-    public void addSubtask(int id, Subtask subtask) {
-        this.subtasks.put(id, subtask);
-        this.refreshStatus();
-    }
-
-    /**
-     * Обновить подзачу
-     */
-    public void updateSubtask(Subtask subtask) {
-        this.subtasks.put(subtask.getId(), subtask);
-        this.refreshStatus();
+    public void addSubtask(int id) {
+        this.subtaskIds.add(id);
     }
 
     /**
@@ -71,46 +39,6 @@ public class Epic extends Task {
      * @param id
      */
     public void removeSubtask(int id) {
-        this.subtasks.remove(id);
-        this.refreshStatus();
-    }
-
-    @Override
-    public void setStatus(Status status) {
-        // Закрыли ручное смену статуса
-    }
-
-    /**
-     * Обновить статус эпика
-     */
-    private void refreshStatus() {
-        if (this.subtasks.isEmpty()) {
-            this.status = Status.NEW;
-            return;
-        }
-        if (this.subtasks.size() == this.getSubtasksByStatus(Status.NEW).size()) {
-            this.status = Status.NEW;
-            return;
-        }
-        if (this.subtasks.size() == this.getSubtasksByStatus(Status.DONE).size()) {
-            this.status = Status.DONE;
-            return;
-        }
-        this.status = Status.IN_PROGRESS;
-    }
-
-    /**
-     * Получить список подзадач в опреденном статусе
-     * @param status
-     * @return
-     */
-    private ArrayList<Subtask> getSubtasksByStatus(Status status) {
-        ArrayList<Subtask> subtasks = new ArrayList<>();
-        for (Map.Entry<Integer, Subtask> subtask : this.subtasks.entrySet()) {
-            if (subtask.getValue().status == status) {
-                subtasks.add(subtask.getValue());
-            }
-        }
-        return subtasks;
+        this.subtaskIds.remove(id);
     }
 }

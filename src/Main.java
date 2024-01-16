@@ -52,15 +52,6 @@ public class Main {
         System.out.println(manager.getEpics());
         System.out.println(manager.getSubtasks());
 
-        // Несанционированная смена статуса
-        epic1.setStatus(Status.IN_PROGRESS);
-        manager.updateEpic(epic1);
-
-        System.out.println("\nПроизошла попытка ручной смены статуса эпика:");
-
-        // Печать
-        System.out.println(manager.getEpics());
-
         // Удаление
         manager.removeTask(task2.getId());
         manager.removeEpic(epic2.getId());

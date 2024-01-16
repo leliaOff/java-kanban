@@ -2,8 +2,8 @@ package kanban.task;
 
 public class Subtask extends Task {
 
-    /** Эпик */
-    private Epic epic;
+    /** ID Эпика */
+    private int epicId;
 
     /**
      * construct
@@ -15,11 +15,11 @@ public class Subtask extends Task {
         super(title, description);
     }
 
-    public Epic getEpic() {
-        return epic;
+    public int getEpicId() {
+        return epicId;
     }
 
-    public void setEpic(Epic epic) {
-        this.epic = epic;
+    public void setEpicId(int epicId) {
+        this.epicId = epicId;
     }
 }
