@@ -1,4 +1,4 @@
-import kanban.manager.InMemoryITaskManager;
+import kanban.manager.InMemoryTaskManager;
 import kanban.manager.ManagerFactory;
 import kanban.task.Epic;
 import kanban.task.Status;
@@ -7,10 +7,10 @@ import kanban.task.Task;
 
 public class Main {
 
-    private static InMemoryITaskManager taskManager;
+    private static InMemoryTaskManager taskManager;
 
     public static void main(String[] args) {
-        taskManager = (InMemoryITaskManager) ManagerFactory.getInstance();
+        taskManager = (InMemoryTaskManager) ManagerFactory.getManagerInstance();
 
         // Заполнение
         createTasks();

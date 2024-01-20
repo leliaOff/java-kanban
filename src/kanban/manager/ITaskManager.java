@@ -1,5 +1,6 @@
 package kanban.manager;
 
+import kanban.manager.history.History;
 import kanban.task.Epic;
 import kanban.task.Subtask;
 import kanban.task.Task;

@@ -1,4 +1,4 @@
-package kanban.manager;
+package kanban.manager.history;
 
 public class History<T> {
     private final Class<?> instance;

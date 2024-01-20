@@ -1,5 +1,8 @@
 package kanban.manager;
 
+import kanban.manager.history.History;
+import kanban.manager.history.IHistoryManager;
+import kanban.manager.history.InMemoryHistoryManager;
 import kanban.task.Epic;
 import kanban.task.Status;
 import kanban.task.Subtask;
@@ -9,7 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class InMemoryITaskManager implements ITaskManager<Integer> {
+public class InMemoryTaskManager implements ITaskManager<Integer> {
 
     /**
      * Последовательность ИД
@@ -31,15 +34,13 @@ public class InMemoryITaskManager implements ITaskManager<Integer> {
      */
     private final HashMap<Integer, Subtask> subtasks;
 
-    private final ArrayList<History<Integer>> history;
+    private final InMemoryHistoryManager historyManager;
 
-    private static final int MAX_HISTORY_COUNT = 10;
-
-    public InMemoryITaskManager() {
+    public InMemoryTaskManager() {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();
-        this.history = new ArrayList<>();
+        this.historyManager = (InMemoryHistoryManager) ManagerFactory.getHistoryManagerInstance();
     }
 
     /**
@@ -149,7 +150,7 @@ public class InMemoryITaskManager implements ITaskManager<Integer> {
     @Override
     public Task getTask(int id) {
         Task task = this.tasks.get(id);
-        this.addHistory(task.getClass(), id);
+        this.historyManager.add(task.getClass(), id);
         return task;
     }
 
@@ -161,7 +162,7 @@ public class InMemoryITaskManager implements ITaskManager<Integer> {
     @Override
     public Epic getEpic(int id) {
         Epic epic = this.epics.get(id);
-        this.addHistory(epic.getClass(), id);
+        this.historyManager.add(epic.getClass(), id);
         return epic;
     }
 
@@ -173,7 +174,7 @@ public class InMemoryITaskManager implements ITaskManager<Integer> {
     @Override
     public Subtask getSubtask(int id) {
         Subtask subtask = this.subtasks.get(id);
-        this.addHistory(subtask.getClass(), id);
+        this.historyManager.add(subtask.getClass(), id);
         return subtask;
     }
 
@@ -310,20 +311,9 @@ public class InMemoryITaskManager implements ITaskManager<Integer> {
     }
 
     /**
-     * Добавить запись в историю
-     */
-    private void addHistory(Class<?> instance, int id) {
-        History<Integer> item = new History<>(instance, id);
-        this.history.add(item);
-        if (this.history.size() > MAX_HISTORY_COUNT) {
-            this.history.remove(0);
-        }
-    }
-
-    /**
      * История запросов задач
      */
     public ArrayList<History<Integer>> getHistory() {
-        return this.history;
+        return this.historyManager.getHistory();
     }
 }
