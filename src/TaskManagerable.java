@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-interface TaskManagerable {
+interface TaskManagerable<I>  {
 
     /**
      * Получить список всех задач
@@ -123,4 +123,9 @@ interface TaskManagerable {
      * Удалить подзадачу по ИД
      */
     public void removeSubtask(int id);
+
+    /**
+     * История запросов задач
+     */
+    public ArrayList<History<I>> getHistory();
 }

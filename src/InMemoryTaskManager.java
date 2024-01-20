@@ -5,30 +5,45 @@ import kanban.task.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class InMemoryTaskManager implements TaskManagerable {
+public class InMemoryTaskManager implements TaskManagerable<Integer> {
 
-    /** Последовательность ИД */
+    /**
+     * Последовательность ИД
+     */
     private static int sequenceId = 1;
 
-    /** Список задач */
+    /**
+     * Список задач
+     */
     private final HashMap<Integer, Task> tasks;
 
-    /** Список эпиков */
+    /**
+     * Список эпиков
+     */
     private final HashMap<Integer, Epic> epics;
 
-    /** Список подзадач */
+    /**
+     * Список подзадач
+     */
     private final HashMap<Integer, Subtask> subtasks;
+
+    private final ArrayList<History<Integer>> history;
+
+    private static final int MAX_HISTORY_COUNT = 10;
 
     public InMemoryTaskManager() {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();
+        this.history = new ArrayList<>();
     }
 
     /**
      * Получить список всех задач
+     *
      * @return ArrayList<Task>
      */
     @Override
@@ -38,6 +53,7 @@ public class InMemoryTaskManager implements TaskManagerable {
 
     /**
      * Получить список всех эпиков
+     *
      * @return ArrayList<Epic>
      */
     @Override
@@ -47,6 +63,7 @@ public class InMemoryTaskManager implements TaskManagerable {
 
     /**
      * Получить список всех подзадач
+     *
      * @return ArrayList<Subtask>
      */
     @Override
@@ -56,6 +73,7 @@ public class InMemoryTaskManager implements TaskManagerable {
 
     /**
      * Получить список всех подзадач эпика
+     *
      * @return ArrayList<Subtask>
      */
     @Override
@@ -129,7 +147,9 @@ public class InMemoryTaskManager implements TaskManagerable {
      */
     @Override
     public Task getTask(int id) {
-        return this.tasks.get(id);
+        Task task = this.tasks.get(id);
+        this.addHistory(task.getClass(), id);
+        return task;
     }
 
     /**
@@ -139,7 +159,9 @@ public class InMemoryTaskManager implements TaskManagerable {
      */
     @Override
     public Epic getEpic(int id) {
-        return this.epics.get(id);
+        Epic epic = this.epics.get(id);
+        this.addHistory(epic.getClass(), id);
+        return epic;
     }
 
     /**
@@ -149,7 +171,9 @@ public class InMemoryTaskManager implements TaskManagerable {
      */
     @Override
     public Subtask getSubtask(int id) {
-        return this.subtasks.get(id);
+        Subtask subtask = this.subtasks.get(id);
+        this.addHistory(subtask.getClass(), id);
+        return subtask;
     }
 
     /**
@@ -282,5 +306,23 @@ public class InMemoryTaskManager implements TaskManagerable {
      */
     private static void increaseSequenceId() {
         sequenceId++;
+    }
+
+    /**
+     * Добавить запись в историю
+     */
+    private void addHistory(Class<?> instance, int id) {
+        History<Integer> item = new History<>(instance, id);
+        this.history.add(item);
+        if (this.history.size() > MAX_HISTORY_COUNT) {
+            this.history.remove(0);
+        }
+    }
+
+    /**
+     * История запросов задач
+     */
+    public ArrayList<History<Integer>> getHistory() {
+        return this.history;
     }
 }
