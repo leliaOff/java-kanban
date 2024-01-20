@@ -1,19 +1,15 @@
 package kanban.task;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class Epic extends Task {
 
     /** Список ID подзадач */
-    private ArrayList<Integer> subtaskIds;
+    private final ArrayList<Integer> subtaskIds;
 
     /**
      * construct
      *
-     * @param title
-     * @param description
      */
     public Epic(String title, String description) {
         super(title, description);

@@ -20,9 +20,6 @@ public class Task {
 
     /**
      * construct
-     *
-     * @param title
-     * @param description
      */
     public Task(String title, String description) {
         this.title = title;

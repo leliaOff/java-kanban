@@ -7,21 +7,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Manager {
+public class InMemoryTaskManager implements TaskManagerable {
 
     /** Последовательность ИД */
     private static int sequenceId = 1;
 
     /** Список задач */
-    private HashMap<Integer, Task> tasks;
+    private final HashMap<Integer, Task> tasks;
 
     /** Список эпиков */
-    private HashMap<Integer, Epic> epics;
+    private final HashMap<Integer, Epic> epics;
 
     /** Список подзадач */
-    private HashMap<Integer, Subtask> subtasks;
+    private final HashMap<Integer, Subtask> subtasks;
 
-    public Manager() {
+    public InMemoryTaskManager() {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();
@@ -31,6 +31,7 @@ public class Manager {
      * Получить список всех задач
      * @return ArrayList<Task>
      */
+    @Override
     public ArrayList<Task> getTasks() {
         return new ArrayList<>(this.tasks.values());
     }
@@ -39,6 +40,7 @@ public class Manager {
      * Получить список всех эпиков
      * @return ArrayList<Epic>
      */
+    @Override
     public ArrayList<Epic> getEpics() {
         return new ArrayList<>(this.epics.values());
     }
@@ -47,6 +49,7 @@ public class Manager {
      * Получить список всех подзадач
      * @return ArrayList<Subtask>
      */
+    @Override
     public ArrayList<Subtask> getSubtasks() {
         return new ArrayList<>(this.subtasks.values());
     }
@@ -55,6 +58,7 @@ public class Manager {
      * Получить список всех подзадач эпика
      * @return ArrayList<Subtask>
      */
+    @Override
     public ArrayList<Subtask> getSubtaskByEpic(Epic epic) {
         ArrayList<Subtask> subtasks = this.getSubtasks();
         ArrayList<Subtask> epicSubtasks = new ArrayList<>();
@@ -69,6 +73,7 @@ public class Manager {
     /**
      * Удалить все задачи и эпики
      */
+    @Override
     public void removeAll() {
         this.removeAllTasks();
         this.removeAllEpics();
@@ -78,6 +83,7 @@ public class Manager {
     /**
      * Удалить все задачи
      */
+    @Override
     public void removeAllTasks() {
         this.tasks.clear();
     }
@@ -85,6 +91,7 @@ public class Manager {
     /**
      * Удалить все эпики
      */
+    @Override
     public void removeAllEpics() {
         this.subtasks.clear();
         this.epics.clear();
@@ -93,6 +100,7 @@ public class Manager {
     /**
      * Удалить все подзадачи
      */
+    @Override
     public void removeAllSubtasks() {
         this.subtasks.clear();
         for (Map.Entry<Integer, Epic> epic : this.epics.entrySet()) {
@@ -104,6 +112,7 @@ public class Manager {
     /**
      * Удалить все подзадачи эпика
      */
+    @Override
     public void removeAllSubtasksByEpic(Epic epic) {
         ArrayList<Subtask> subtasks = this.getSubtaskByEpic(epic);
         for (Subtask subtask : subtasks) {
@@ -118,6 +127,7 @@ public class Manager {
      *
      * @return Task|null
      */
+    @Override
     public Task getTask(int id) {
         return this.tasks.get(id);
     }
@@ -127,6 +137,7 @@ public class Manager {
      *
      * @return Epic|null
      */
+    @Override
     public Epic getEpic(int id) {
         return this.epics.get(id);
     }
@@ -136,6 +147,7 @@ public class Manager {
      *
      * @return Subtask|null
      */
+    @Override
     public Subtask getSubtask(int id) {
         return this.subtasks.get(id);
     }
@@ -143,6 +155,7 @@ public class Manager {
     /**
      * Создать задачу
      */
+    @Override
     public void addTask(Task task) {
         task.setId(sequenceId);
         this.tasks.put(sequenceId, task);
@@ -152,6 +165,7 @@ public class Manager {
     /**
      * Создать эпик
      */
+    @Override
     public void addEpic(Epic epic) {
         epic.setId(sequenceId);
         this.epics.put(sequenceId, epic);
@@ -161,6 +175,7 @@ public class Manager {
     /**
      * Создать подзадачу эпика
      */
+    @Override
     public void addSubtaskByEpic(Subtask subtask, Epic epic) {
         subtask.setId(sequenceId);
         subtask.setEpicId(epic.getId());
@@ -173,6 +188,7 @@ public class Manager {
     /**
      * Обновить задачу
      */
+    @Override
     public void updateTask(Task task) {
         this.tasks.put(task.getId(), task);
     }
@@ -180,6 +196,7 @@ public class Manager {
     /**
      * Обновить эпик
      */
+    @Override
     public void updateEpic(Epic epic) {
         Epic currentEpic = this.epics.get(epic.getId());
         if (epic.getStatus() != currentEpic.getStatus()) {
@@ -191,6 +208,7 @@ public class Manager {
     /**
      * Обновить подзачу
      */
+    @Override
     public void updateSubtask(Subtask subtask) {
         this.subtasks.put(subtask.getId(), subtask);
         this.refreshEpicStatus(this.getEpic(subtask.getEpicId()));
@@ -198,16 +216,16 @@ public class Manager {
 
     /**
      * Удалить задачу по ИД
-     * @param id
      */
+    @Override
     public void removeTask(int id) {
         this.tasks.remove(id);
     }
 
     /**
      * Удалить эпик по ИД
-     * @param id
      */
+    @Override
     public void removeEpic(int id) {
         Epic epic = this.getEpic(id);
         this.removeAllSubtasksByEpic(epic);
@@ -216,8 +234,8 @@ public class Manager {
 
     /**
      * Удалить подзадачу по ИД
-     * @param id
      */
+    @Override
     public void removeSubtask(int id) {
         Subtask subtask = this.getSubtask(id);
         Epic epic = this.getEpic(subtask.getEpicId());
@@ -247,8 +265,6 @@ public class Manager {
 
     /**
      * Получить список подзадач эпика в опреденном статусе
-     * @param status
-     * @return
      */
     private ArrayList<Subtask> getEpicSubtasksByStatus(Epic epic, Status status) {
         ArrayList<Subtask> subtasks = this.getSubtaskByEpic(epic);
