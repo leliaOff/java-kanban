@@ -17,4 +17,12 @@ public class History<T> {
     public  T getId() {
         return this.id;
     }
+
+    @Override
+    public String toString() {
+        return "History{" +
+                "id=" + id +
+                ", instance=" + instance.getSimpleName() +
+                '}';
+    }
 }
