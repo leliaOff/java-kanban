@@ -1,3 +1,5 @@
+package kanban.manager;
+
 import kanban.task.Epic;
 import kanban.task.Status;
 import kanban.task.Subtask;
@@ -5,10 +7,9 @@ import kanban.task.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-public class InMemoryTaskManager implements TaskManagerable<Integer> {
+public class InMemoryITaskManager implements ITaskManager<Integer> {
 
     /**
      * Последовательность ИД
@@ -34,7 +35,7 @@ public class InMemoryTaskManager implements TaskManagerable<Integer> {
 
     private static final int MAX_HISTORY_COUNT = 10;
 
-    public InMemoryTaskManager() {
+    public InMemoryITaskManager() {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();

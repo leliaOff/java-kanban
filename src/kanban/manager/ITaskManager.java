@@ -1,13 +1,12 @@
+package kanban.manager;
+
 import kanban.task.Epic;
-import kanban.task.Status;
 import kanban.task.Subtask;
 import kanban.task.Task;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
-interface TaskManagerable<I>  {
+public interface ITaskManager<I>  {
 
     /**
      * Получить список всех задач

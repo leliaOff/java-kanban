@@ -1,3 +1,5 @@
+import kanban.manager.InMemoryITaskManager;
+import kanban.manager.ManagerFactory;
 import kanban.task.Epic;
 import kanban.task.Status;
 import kanban.task.Subtask;
@@ -6,7 +8,7 @@ import kanban.task.Task;
 public class Main {
 
     public static void main(String[] args) {
-        InMemoryTaskManager inMemoryTaskManager = new InMemoryTaskManager();
+        InMemoryITaskManager inMemoryTaskManager = (InMemoryITaskManager) ManagerFactory.getInstance();
 
         // Задача №1
         Task task1 = new Task("Помыть посуду", "Очень тщательно помыть посуду. И дно у тарелок тоже!");
