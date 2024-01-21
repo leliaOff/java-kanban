@@ -7,9 +7,6 @@ public class Subtask extends Task {
 
     /**
      * construct
-     *
-     * @param title
-     * @param description
      */
     public Subtask(String title, String description) {
         super(title, description);

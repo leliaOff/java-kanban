@@ -16,11 +16,32 @@ public class Epic extends Task {
         this.subtaskIds = new ArrayList<>();
     }
 
+    @Override
+    public void setStatus(Status status) {
+
+    }
+
+    public void setStatusNew() {
+        status = Status.NEW;
+    }
+
+    public void setStatusInProgress() {
+        status = Status.IN_PROGRESS;
+    }
+
+    public void setStatusDone() {
+        status = Status.DONE;
+    }
+
     /**
      * Удалить все подзадачи
      */
     public void removeAllSubtasks() {
         this.subtaskIds.clear();
+    }
+
+    public ArrayList<Integer> getSubtaskIds() {
+        return this.subtaskIds;
     }
 
     /**
@@ -32,7 +53,6 @@ public class Epic extends Task {
 
     /**
      * Удалить подзадачу по ИД
-     * @param id
      */
     public void removeSubtask(int id) {
         this.subtaskIds.remove(id);

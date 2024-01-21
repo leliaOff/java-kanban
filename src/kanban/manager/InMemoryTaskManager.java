@@ -1,7 +1,6 @@
 package kanban.manager;
 
 import kanban.manager.history.History;
-import kanban.manager.history.IHistoryManager;
 import kanban.manager.history.InMemoryHistoryManager;
 import kanban.task.Epic;
 import kanban.task.Status;
@@ -150,6 +149,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     @Override
     public Task getTask(int id) {
         Task task = this.tasks.get(id);
+        if (task == null) {
+            return null;
+        }
         this.historyManager.add(task.getClass(), id);
         return task;
     }
@@ -162,6 +164,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     @Override
     public Epic getEpic(int id) {
         Epic epic = this.epics.get(id);
+        if (epic == null) {
+            return null;
+        }
         this.historyManager.add(epic.getClass(), id);
         return epic;
     }
@@ -174,6 +179,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     @Override
     public Subtask getSubtask(int id) {
         Subtask subtask = this.subtasks.get(id);
+        if (subtask == null) {
+            return null;
+        }
         this.historyManager.add(subtask.getClass(), id);
         return subtask;
     }
@@ -224,10 +232,6 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void updateEpic(Epic epic) {
-        Epic currentEpic = this.epics.get(epic.getId());
-        if (epic.getStatus() != currentEpic.getStatus()) {
-            epic.setStatus(currentEpic.getStatus());
-        }
         this.epics.put(epic.getId(), epic);
     }
 
@@ -275,18 +279,18 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     private void refreshEpicStatus(Epic epic) {
         ArrayList<Subtask> subtasks = this.getSubtaskByEpic(epic);
         if (subtasks.isEmpty()) {
-            epic.setStatus(Status.NEW);
+            epic.setStatusNew();
             return;
         }
         if (subtasks.size() == this.getEpicSubtasksByStatus(epic, Status.NEW).size()) {
-            epic.setStatus(Status.NEW);
+            epic.setStatusNew();
             return;
         }
         if (subtasks.size() == this.getEpicSubtasksByStatus(epic, Status.DONE).size()) {
-            epic.setStatus(Status.DONE);
+            epic.setStatusDone();
             return;
         }
-        epic.setStatus(Status.IN_PROGRESS);
+        epic.setStatusInProgress();
     }
 
     /**
