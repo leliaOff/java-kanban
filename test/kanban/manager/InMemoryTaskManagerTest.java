@@ -1,6 +1,5 @@
 package kanban.manager;
 
-import kanban.manager.history.History;
 import kanban.task.Epic;
 import kanban.task.Status;
 import kanban.task.Subtask;
@@ -10,6 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 class InMemoryTaskManagerTest {
 
@@ -202,7 +202,7 @@ class InMemoryTaskManagerTest {
         taskManager.getTask(tasks.get(0).getId());
         taskManager.getTask(tasks.get(1).getId());
         taskManager.getSubtask(subtasks.get(0).getId());
-        ArrayList<History<Integer>> history = taskManager.getHistory();
+        LinkedList<Task> history = taskManager.getHistory();
         Assertions.assertEquals(3, history.size());
     }
 }

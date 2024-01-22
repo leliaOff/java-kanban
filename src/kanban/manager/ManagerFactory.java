@@ -13,11 +13,11 @@ public class ManagerFactory {
         return new InMemoryTaskManager();
     }
 
-    public static IHistoryManager<?> getHistoryManagerInstance() {
+    public static IHistoryManager getHistoryManagerInstance() {
         return getDefaultHistoryManager();
     }
 
-    private static IHistoryManager<?> getDefaultHistoryManager() {
+    private static IHistoryManager getDefaultHistoryManager() {
         return new InMemoryHistoryManager();
     }
 }

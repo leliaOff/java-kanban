@@ -1,22 +1,23 @@
 package kanban.manager.history;
 
-import java.util.ArrayList;
+import kanban.task.Task;
 
-public class InMemoryHistoryManager implements IHistoryManager<Integer> {
-    private final ArrayList<History<Integer>> history;
+import java.util.LinkedList;
+
+public class InMemoryHistoryManager implements IHistoryManager {
+    private final LinkedList<Task> history;
 
     private static final int MAX_HISTORY_COUNT = 10;
 
     public InMemoryHistoryManager() {
-        this.history = new ArrayList<>();
+        this.history = new LinkedList<>();
     }
 
     /**
      * Добавить запись в историю
      */
-    public void add(Class<?> instance, Integer id) {
-        History<Integer> item = new History<>(instance, id);
-        this.history.add(item);
+    public void add(Task task) {
+        this.history.add(task);
         if (this.history.size() > MAX_HISTORY_COUNT) {
             this.history.remove(0);
         }
@@ -25,7 +26,7 @@ public class InMemoryHistoryManager implements IHistoryManager<Integer> {
     /**
      * История запросов задач
      */
-    public ArrayList<History<Integer>> getHistory() {
+    public LinkedList<Task> getHistory() {
         return this.history;
     }
 }

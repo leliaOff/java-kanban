@@ -1,15 +1,17 @@
 package kanban.manager.history;
 
-import java.util.ArrayList;
+import kanban.task.Task;
 
-public interface IHistoryManager<I> {
+import java.util.LinkedList;
+
+public interface IHistoryManager {
     /**
      * Добавить запись в историю
      */
-    public void add(Class<?> instance, I id);
+    public void add(Task task);
 
     /**
      * Вернуть историю
      */
-    public ArrayList<History<I>> getHistory();
+    public LinkedList<Task> getHistory();
 }

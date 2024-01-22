@@ -1,6 +1,5 @@
 package kanban.manager;
 
-import kanban.manager.history.History;
 import kanban.manager.history.InMemoryHistoryManager;
 import kanban.task.Epic;
 import kanban.task.Status;
@@ -9,6 +8,7 @@ import kanban.task.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class InMemoryTaskManager implements ITaskManager<Integer> {
@@ -152,7 +152,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
         if (task == null) {
             return null;
         }
-        this.historyManager.add(task.getClass(), id);
+        this.historyManager.add(task);
         return task;
     }
 
@@ -167,7 +167,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
         if (epic == null) {
             return null;
         }
-        this.historyManager.add(epic.getClass(), id);
+        this.historyManager.add(epic);
         return epic;
     }
 
@@ -182,7 +182,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
         if (subtask == null) {
             return null;
         }
-        this.historyManager.add(subtask.getClass(), id);
+        this.historyManager.add(subtask);
         return subtask;
     }
 
@@ -317,7 +317,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     /**
      * История запросов задач
      */
-    public ArrayList<History<Integer>> getHistory() {
+    public LinkedList<Task> getHistory() {
         return this.historyManager.getHistory();
     }
 }

@@ -1,11 +1,11 @@
 package kanban.manager;
 
-import kanban.manager.history.History;
 import kanban.task.Epic;
 import kanban.task.Subtask;
 import kanban.task.Task;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 
 public interface ITaskManager<I>  {
 
@@ -127,5 +127,5 @@ public interface ITaskManager<I>  {
     /**
      * История запросов задач
      */
-    public ArrayList<History<I>> getHistory();
+    public LinkedList<Task> getHistory();
 }
