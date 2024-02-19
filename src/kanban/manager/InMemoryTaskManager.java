@@ -104,6 +104,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void removeAllTasks() {
+        for (Task task : this.tasks.values()) {
+            this.historyManager.remove(task.getId());
+        }
         this.tasks.clear();
     }
 
@@ -112,7 +115,13 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void removeAllEpics() {
+        for (Task subtask : this.subtasks.values()) {
+            this.historyManager.remove(subtask.getId());
+        }
         this.subtasks.clear();
+        for (Task epic : this.epics.values()) {
+            this.historyManager.remove(epic.getId());
+        }
         this.epics.clear();
     }
 
@@ -121,6 +130,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void removeAllSubtasks() {
+        for (Task subtask : this.subtasks.values()) {
+            this.historyManager.remove(subtask.getId());
+        }
         this.subtasks.clear();
         for (Map.Entry<Integer, Epic> epic : this.epics.entrySet()) {
             epic.getValue().removeAllSubtasks();
@@ -135,6 +147,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     public void removeAllSubtasksByEpic(Epic epic) {
         ArrayList<Subtask> subtasks = this.getSubtaskByEpic(epic);
         for (Subtask subtask : subtasks) {
+            this.historyManager.remove(subtask.getId());
             this.subtasks.remove(subtask.getId());
         }
         epic.removeAllSubtasks();
@@ -249,6 +262,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void removeTask(int id) {
+        this.historyManager.remove(id);
         this.tasks.remove(id);
     }
 
@@ -259,6 +273,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     public void removeEpic(int id) {
         Epic epic = this.getEpic(id);
         this.removeAllSubtasksByEpic(epic);
+        this.historyManager.remove(id);
         this.epics.remove(id);
     }
 
@@ -270,6 +285,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
         Subtask subtask = this.getSubtask(id);
         Epic epic = this.getEpic(subtask.getEpicId());
         epic.removeSubtask(id);
+        this.historyManager.remove(id);
         this.subtasks.remove(id);
     }
 
