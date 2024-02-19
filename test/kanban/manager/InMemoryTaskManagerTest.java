@@ -203,6 +203,13 @@ class InMemoryTaskManagerTest {
         Assertions.assertEquals(3, history.size());
         taskManager.getTask(tasks.get(0).getId());
         taskManager.getTask(tasks.get(1).getId());
+
+        history = taskManager.getHistory();
         Assertions.assertEquals(3, history.size());
+        taskManager.removeTask(tasks.get(0).getId());
+        taskManager.removeTask(tasks.get(1).getId());
+
+        history = taskManager.getHistory();
+        Assertions.assertEquals(1, history.size());
     }
 }
