@@ -11,6 +11,12 @@ public interface IHistoryManager {
     public void add(Task task);
 
     /**
+     * Удалить запись из истории
+     * @param id
+     */
+    public void remove(int id);
+
+    /**
      * Вернуть историю
      */
     public LinkedList<Task> getHistory();
