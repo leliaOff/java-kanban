@@ -333,7 +333,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     /**
      * История запросов задач
      */
-    public LinkedList<Task> getHistory() {
+    public ArrayList<Task> getHistory() {
         return this.historyManager.getHistory();
     }
 }

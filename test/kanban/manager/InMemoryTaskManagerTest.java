@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 class InMemoryTaskManagerTest {
 
@@ -199,7 +198,7 @@ class InMemoryTaskManagerTest {
         taskManager.getTask(tasks.get(0).getId());
         taskManager.getTask(tasks.get(1).getId());
         taskManager.getSubtask(subtasks.get(0).getId());
-        LinkedList<Task> history = taskManager.getHistory();
+        ArrayList<Task> history = taskManager.getHistory();
         Assertions.assertEquals(3, history.size());
         taskManager.getTask(tasks.get(0).getId());
         taskManager.getTask(tasks.get(1).getId());
