@@ -127,5 +127,5 @@ public interface ITaskManager<I>  {
     /**
      * История запросов задач
      */
-    public LinkedList<Task> getHistory();
+    public ArrayList<Task> getHistory();
 }

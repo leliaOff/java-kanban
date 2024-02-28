@@ -2,6 +2,7 @@ package kanban.manager.history;
 
 import kanban.task.Task;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 public interface IHistoryManager {
@@ -11,7 +12,13 @@ public interface IHistoryManager {
     public void add(Task task);
 
     /**
+     * Удалить запись из истории
+     * @param id
+     */
+    public void remove(int id);
+
+    /**
      * Вернуть историю
      */
-    public LinkedList<Task> getHistory();
+    public ArrayList<Task> getHistory();
 }

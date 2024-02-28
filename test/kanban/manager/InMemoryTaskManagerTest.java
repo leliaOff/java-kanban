@@ -9,7 +9,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 class InMemoryTaskManagerTest {
 
@@ -119,7 +118,6 @@ class InMemoryTaskManagerTest {
     void addTask() {
         Task newTask = new Task("Тестовая задача", "Описание тестовой задачи");
         taskManager.addTask(newTask);
-        Assertions.assertNotNull(newTask.getId());
         Task inMemoryTask = taskManager.getTask(newTask.getId());
         Assertions.assertEquals(newTask.getId(), inMemoryTask.getId());
         Assertions.assertEquals(newTask, inMemoryTask);
@@ -130,7 +128,6 @@ class InMemoryTaskManagerTest {
     void addEpic() {
         Epic newEpic = new Epic("Тестовый эпик", "Описание тестового эпика");
         taskManager.addEpic(newEpic);
-        Assertions.assertNotNull(newEpic.getId());
         Epic inMemoryEpic = taskManager.getEpic(newEpic.getId());
         Assertions.assertEquals(newEpic.getId(), inMemoryEpic.getId());
         Assertions.assertEquals(newEpic, inMemoryEpic);
@@ -142,7 +139,6 @@ class InMemoryTaskManagerTest {
         Epic epic = epics.get(0);
         Subtask newSubtask = new Subtask("Тестовая подзадача", "Описание тестовой задачи");
         taskManager.addSubtaskByEpic(newSubtask, epic);
-        Assertions.assertNotNull(newSubtask.getId());
         Subtask inMemorySubtask = taskManager.getSubtask(newSubtask.getId());
         Assertions.assertEquals(newSubtask.getId(), inMemorySubtask.getId());
         Assertions.assertEquals(newSubtask, inMemorySubtask);
@@ -202,7 +198,17 @@ class InMemoryTaskManagerTest {
         taskManager.getTask(tasks.get(0).getId());
         taskManager.getTask(tasks.get(1).getId());
         taskManager.getSubtask(subtasks.get(0).getId());
-        LinkedList<Task> history = taskManager.getHistory();
+        ArrayList<Task> history = taskManager.getHistory();
         Assertions.assertEquals(3, history.size());
+        taskManager.getTask(tasks.get(0).getId());
+        taskManager.getTask(tasks.get(1).getId());
+
+        history = taskManager.getHistory();
+        Assertions.assertEquals(3, history.size());
+        taskManager.removeTask(tasks.get(0).getId());
+        taskManager.removeTask(tasks.get(1).getId());
+
+        history = taskManager.getHistory();
+        Assertions.assertEquals(1, history.size());
     }
 }
