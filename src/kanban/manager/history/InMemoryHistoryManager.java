@@ -47,7 +47,7 @@ public class InMemoryHistoryManager implements IHistoryManager {
     public ArrayList<Task> getHistory() {
         ArrayList<Task> history = new ArrayList<>();
         for (TaskNode node : this.history) {
-            history.add(node.value);
+            history.add(node.getValue());
         }
         return history;
     }
@@ -57,8 +57,8 @@ public class InMemoryHistoryManager implements IHistoryManager {
      */
     private void linkLast(TaskNode node) {
         if (this.tail != null) {
-            this.tail.next = node;
-            node.prev = this.tail;
+            this.tail.setNext(node);
+            node.setPrev(this.tail);
         }
         if (this.head == null) {
             this.head = node;
@@ -73,18 +73,18 @@ public class InMemoryHistoryManager implements IHistoryManager {
     private void removeNode(TaskNode node) {
         this.history.remove(node);
         if (this.tail.equals(node)) {
-            this.tail = node.prev;
+            this.tail = node.getPrev();
         }
         if (this.head.equals(node)) {
-            this.head = node.next;
+            this.head = node.getNext();
         }
-        if (node.prev != null) {
-            node.prev.next = node.next;
+        if (node.getPrev() != null) {
+            node.getPrev().setNext(node.getNext());
         }
-        if (node.next != null) {
-            node.next.prev = node.prev;
+        if (node.getNext() != null) {
+            node.getNext().setPrev(node.getPrev());
         }
-        node.prev = null;
-        node.next = null;
+        node.setPrev(null);
+        node.setNext(null);
     }
 }

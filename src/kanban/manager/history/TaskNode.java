@@ -3,11 +3,11 @@ package kanban.manager.history;
 import kanban.task.Task;
 
 public class TaskNode {
-    public Task value;
+    private Task value;
 
-    public TaskNode next;
+    private TaskNode next;
 
-    public TaskNode prev;
+    private TaskNode prev;
 
     public TaskNode(Task value) {
         this.value = value;
@@ -25,5 +25,29 @@ public class TaskNode {
     @Override
     public int hashCode() {
         return this.value.hashCode();
+    }
+
+    public Task getValue() {
+        return value;
+    }
+
+    public void setValue(Task value) {
+        this.value = value;
+    }
+
+    public TaskNode getNext() {
+        return next;
+    }
+
+    public void setNext(TaskNode next) {
+        this.next = next;
+    }
+
+    public TaskNode getPrev() {
+        return prev;
+    }
+
+    public void setPrev(TaskNode prev) {
+        this.prev = prev;
     }
 }
