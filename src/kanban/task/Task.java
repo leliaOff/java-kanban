@@ -31,6 +31,11 @@ public class Task {
         this.id = id;
     }
 
+    /**
+     * Получить ИД задачи
+     *
+     * @return int ИД задачи
+     */
     public int getId() {
         return this.id;
     }
@@ -39,8 +44,45 @@ public class Task {
         this.status = status;
     }
 
+    /**
+     * Получить статус
+     *
+     * @return Status Статус
+     */
     public Status getStatus() {
         return this.status;
+    }
+
+    /**
+     * Получить Наименование задачи
+     *
+     * @return String Наименование задачи
+     */
+    public String getTitle() {
+        return this.title;
+    }
+
+    /**
+     * Получить Описание задачи
+     *
+     * @return String Описание задачи
+     */
+    public String getDescription() {
+        return this.description;
+    }
+
+    /**
+     * Возвращает тип задачи: задача, эпик или подзадача
+     * @return  Тип задачи
+     */
+    public Type getType() {
+        if (this instanceof Epic) {
+            return Type.EPIC;
+        }
+        if (this instanceof Subtask) {
+            return Type.SUBTASK;
+        }
+        return Type.TASK;
     }
 
     @Override

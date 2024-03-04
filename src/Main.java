@@ -1,4 +1,4 @@
-import kanban.manager.InMemoryTaskManager;
+import kanban.manager.FileBackedTaskManager;
 import kanban.manager.ManagerFactory;
 import kanban.task.Epic;
 import kanban.task.Status;
@@ -7,10 +7,10 @@ import kanban.task.Task;
 
 public class Main {
 
-    private static InMemoryTaskManager taskManager;
+    private static FileBackedTaskManager taskManager;
 
     public static void main(String[] args) {
-        taskManager = (InMemoryTaskManager) ManagerFactory.getManagerInstance();
+        taskManager = (FileBackedTaskManager) ManagerFactory.getManagerInstance();
 
         // Заполнение
         createTasks();
@@ -22,9 +22,9 @@ public class Main {
         printTasks();
 
         // Удаление
-        removeTask();
-        System.out.println("\nПроизошло удаление задачи и эпика:");
-        printTasks();
+//        removeTask();
+//        System.out.println("\nПроизошло удаление задачи и эпика:");
+//        printTasks();
 
         System.out.println("\nИстория обращения к задачам:");
         System.out.println(taskManager.getHistory());

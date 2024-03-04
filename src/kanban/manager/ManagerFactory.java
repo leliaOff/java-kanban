@@ -10,7 +10,8 @@ public class ManagerFactory {
     }
 
     private static ITaskManager<?> getDefaultManager() {
-        return new InMemoryTaskManager();
+        return new FileBackedTaskManager("storage/tasks.csv");
+        // return new InMemoryTaskManager();
     }
 
     public static IHistoryManager getHistoryManagerInstance() {
