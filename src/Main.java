@@ -13,21 +13,21 @@ public class Main {
         taskManager = (FileBackedTaskManager) ManagerFactory.getManagerInstance();
 
         // Заполнение
-        createTasks();
+        //createTasks();
         printTasks();
 
         // Смена статуса
-        taskStatusChange();
-        System.out.println("\nПроизошла смена статуса задач:");
-        printTasks();
+//        taskStatusChange();
+//        System.out.println("\nПроизошла смена статуса задач:");
+//        printTasks();
 
         // Удаление
 //        removeTask();
 //        System.out.println("\nПроизошло удаление задачи и эпика:");
 //        printTasks();
 
-        System.out.println("\nИстория обращения к задачам:");
-        System.out.println(taskManager.getHistory());
+//        System.out.println("\nИстория обращения к задачам:");
+//        System.out.println(taskManager.getHistory());
     }
 
     /**

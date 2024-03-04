@@ -1,11 +1,15 @@
 package kanban.manager;
 
+import kanban.manager.exceptions.FileBackedIOException;
 import kanban.task.Epic;
 import kanban.task.Subtask;
 import kanban.task.Task;
 import kanban.task.Type;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskManager<Integer> {
     /**
@@ -16,6 +20,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
     public FileBackedTaskManager(String filename) {
         super();
         this.filename = filename;
+        this.restore();
     }
 
     /**
@@ -144,45 +149,53 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
         save();
     }
 
-    private void save() {
-        try (FileWriter writer = new FileWriter(this.filename)) {
-            writer.write("id,type,name,status,description,epic\n");
-
-            // Задачи
-            for (Task task : this.getTasks()) {
-                writer.write(getWriterLink(task));
+    /**
+     * Востановить состояние задачника
+     */
+    private void restore() {
+        try (FileReader reader = new FileReader(this.filename)) {
+            BufferedReader bufferedReader = new BufferedReader(reader);
+            while (bufferedReader.ready()) {
+                String line = bufferedReader.readLine();
+                String[] data = line.split(",");
+                if (Type.valueOf(data[1]).equals(Type.EPIC)) {
+                    Epic epic = new Epic(line);
+                    super.addEpic(epic);
+                } else if (Type.valueOf(data[1]).equals(Type.SUBTASK)) {
+                    Subtask subtask = new Subtask(line);
+                    Epic epic = this.getEpic(subtask.getEpicId());
+                    super.addSubtaskByEpic(subtask, epic);
+                } else {
+                    Task task = new Task(line);
+                    super.addTask(task);
+                }
             }
-
-            // Эпики
-            for (Task task : this.getEpics()) {
-                writer.write(getWriterLink(task));
-            }
-
-            // Подзадачи
-            for (Task task : this.getSubtasks()) {
-                writer.write(getWriterLink(task));
-            }
-
-        } catch (Throwable throwable) {
-            System.out.println("Во время записи файла произошла ошибка");
+            bufferedReader.close();
+        } catch (Throwable exception) {
+            System.out.println("Во время чтения из файла произошла ошибка");
         }
     }
 
     /**
-     * Сформировать строку для записи в файл
-     *
-     * @return  Строка для записи в файл
+     * Сохранить состояние задачника
      */
-    private String getWriterLink(Task task)
-    {
-        return String.format(
-                "%d,%s,%s,%s,%s,%s\n",
-                task.getId(),
-                task.getType(),
-                task.getTitle(),
-                task.getStatus(),
-                task.getDescription(),
-                task.getType().equals(Type.SUBTASK) ? ((Subtask) task).getEpicId() : ""
-        );
+    private void save() {
+        try (FileWriter writer = new FileWriter(this.filename)) {
+            // Задачи
+            for (Task task : this.getTasks()) {
+                writer.write(task.toString());
+            }
+            // Эпики
+            for (Task task : this.getEpics()) {
+                writer.write(task.toString());
+            }
+            // Подзадачи
+            for (Task task : this.getSubtasks()) {
+                writer.write(task.toString());
+            }
+
+        } catch (IOException exception) {
+            throw new FileBackedIOException("Во время записи файла произошла ошибка");
+        }
     }
 }

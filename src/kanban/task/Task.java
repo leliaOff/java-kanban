@@ -27,6 +27,17 @@ public class Task {
         this.status = Status.NEW;
     }
 
+    /**
+     * construct
+     */
+    public Task(String line) {
+        String[] data = line.split(",");
+        this.id = Integer.parseInt(data[0]);
+        this.title = data[2];
+        this.status = Status.valueOf(data[3]);
+        this.description = data[4];
+    }
+
     public void setId(int id) {
         this.id = id;
     }
@@ -100,11 +111,14 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                '}';
+        return String.format(
+                "%d,%s,%s,%s,%s,%s\n",
+                this.getId(),
+                this.getType(),
+                this.getTitle(),
+                this.getStatus(),
+                this.getDescription(),
+                this.getType().equals(Type.SUBTASK) ? ((Subtask) this).getEpicId() : ""
+        );
     }
 }

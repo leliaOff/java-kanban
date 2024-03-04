@@ -16,6 +16,14 @@ public class Epic extends Task {
         this.subtaskIds = new ArrayList<>();
     }
 
+    /**
+     * construct
+     */
+    public Epic(String line) {
+        super(line);
+        this.subtaskIds = new ArrayList<>();
+    }
+
     @Override
     public void setStatus(Status status) {
 
