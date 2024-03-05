@@ -18,10 +18,10 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
      */
     private final String filename;
 
-    public FileBackedTaskManager(String filename) {
+    public FileBackedTaskManager(String taskFilename, String historyFilename) {
         super();
-        this.filename = filename;
-        this.historyManager = new FileBackedHistoryManager(App.getHistoryFilename());
+        this.filename = taskFilename;
+        this.historyManager = new FileBackedHistoryManager(historyFilename);
         this.restore();
     }
 

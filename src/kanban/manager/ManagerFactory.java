@@ -13,7 +13,7 @@ public class ManagerFactory {
             return new InMemoryTaskManager();
         }
         if (App.getMode().equals(Mode.FILE)) {
-            return new FileBackedTaskManager(App.getTaskFilename());
+            return new FileBackedTaskManager(App.getTaskFilename(), App.getHistoryFilename());
         }
         return getDefaultManager();
     }
