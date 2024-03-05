@@ -19,7 +19,7 @@ public class Subtask extends Task {
      */
     public Subtask(String line) {
         super(line);
-        String[] data = line.split(",");
+        String[] data = line.split(";");
         this.epicId = Integer.parseInt(data[5]);
     }
 

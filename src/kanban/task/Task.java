@@ -31,7 +31,7 @@ public class Task {
      * construct
      */
     public Task(String line) {
-        String[] data = line.split(",");
+        String[] data = line.split(";");
         this.id = Integer.parseInt(data[0]);
         this.title = data[2];
         this.status = Status.valueOf(data[3]);
@@ -112,7 +112,7 @@ public class Task {
     @Override
     public String toString() {
         return String.format(
-                "%d,%s,%s,%s,%s,%s\n",
+                "%d;%s;%s;%s;%s;%s\n",
                 this.getId(),
                 this.getType(),
                 this.getTitle(),

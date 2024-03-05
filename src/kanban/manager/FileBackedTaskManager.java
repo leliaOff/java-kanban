@@ -157,13 +157,16 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
             BufferedReader bufferedReader = new BufferedReader(reader);
             while (bufferedReader.ready()) {
                 String line = bufferedReader.readLine();
-                String[] data = line.split(",");
+                String[] data = line.split(";");
                 if (Type.valueOf(data[1]).equals(Type.EPIC)) {
                     Epic epic = new Epic(line);
                     super.addEpic(epic);
                 } else if (Type.valueOf(data[1]).equals(Type.SUBTASK)) {
                     Subtask subtask = new Subtask(line);
                     Epic epic = this.getEpic(subtask.getEpicId());
+                    if (epic == null) {
+                        continue;
+                    }
                     super.addSubtaskByEpic(subtask, epic);
                 } else {
                     Task task = new Task(line);
@@ -172,7 +175,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
             }
             bufferedReader.close();
         } catch (Throwable exception) {
-            System.out.println("Во время чтения из файла произошла ошибка");
+            System.out.printf("Во время чтения из файла %s произошла ошибка\n", this.filename);
         }
     }
 
@@ -195,7 +198,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
             }
 
         } catch (IOException exception) {
-            throw new FileBackedIOException("Во время записи файла произошла ошибка");
+            System.out.printf("Во время записи файла %s произошла ошибка\n", this.filename);
         }
     }
 }
