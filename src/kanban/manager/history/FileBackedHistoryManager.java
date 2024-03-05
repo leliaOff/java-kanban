@@ -8,6 +8,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class FileBackedHistoryManager extends InMemoryHistoryManager implements IHistoryManager {
     /**
@@ -41,6 +43,9 @@ public class FileBackedHistoryManager extends InMemoryHistoryManager implements 
      * Востановить состояние
      */
     private void restore() {
+        if (!Files.exists(Paths.get(this.filename))) {
+            return;
+        }
         try (FileReader reader = new FileReader(this.filename)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
             while (bufferedReader.ready()) {

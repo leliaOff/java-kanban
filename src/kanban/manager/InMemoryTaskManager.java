@@ -20,17 +20,17 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     /**
      * Список задач
      */
-    private final HashMap<Integer, Task> tasks;
+    protected final HashMap<Integer, Task> tasks;
 
     /**
      * Список эпиков
      */
-    private final HashMap<Integer, Epic> epics;
+    protected final HashMap<Integer, Epic> epics;
 
     /**
      * Список подзадач
      */
-    private final HashMap<Integer, Subtask> subtasks;
+    protected final HashMap<Integer, Subtask> subtasks;
 
     protected IHistoryManager historyManager;
 

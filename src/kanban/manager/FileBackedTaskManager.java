@@ -1,6 +1,6 @@
 package kanban.manager;
 
-import config.App;
+import config.tests.App;
 import kanban.manager.history.FileBackedHistoryManager;
 import kanban.manager.history.InMemoryHistoryManager;
 import kanban.task.Epic;
@@ -11,6 +11,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskManager<Integer> {
     /**
@@ -155,6 +157,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
      * Востановить состояние задачника
      */
     private void restore() {
+        if (!Files.exists(Paths.get(this.filename))) {
+            return;
+        }
         try (FileReader reader = new FileReader(this.filename)) {
             BufferedReader bufferedReader = new BufferedReader(reader);
             while (bufferedReader.ready()) {
@@ -162,17 +167,18 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
                 String[] data = line.split(";");
                 if (Type.valueOf(data[1]).equals(Type.EPIC)) {
                     Epic epic = new Epic(line);
-                    super.addEpic(epic);
+                    this.epics.put(epic.getId(), epic);
                 } else if (Type.valueOf(data[1]).equals(Type.SUBTASK)) {
                     Subtask subtask = new Subtask(line);
-                    Epic epic = this.getEpic(subtask.getEpicId());
+                    Epic epic = this.epics.get(subtask.getEpicId());
                     if (epic == null) {
                         continue;
                     }
-                    super.addSubtaskByEpic(subtask, epic);
+                    this.subtasks.put(subtask.getId(), subtask);
+                    epic.addSubtask(subtask.getId());
                 } else {
                     Task task = new Task(line);
-                    super.addTask(task);
+                    this.tasks.put(task.getId(), task);
                 }
             }
             bufferedReader.close();
