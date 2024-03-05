@@ -1,5 +1,8 @@
 package kanban.manager;
 
+import config.App;
+import kanban.manager.history.FileBackedHistoryManager;
+import kanban.manager.history.InMemoryHistoryManager;
 import kanban.task.Epic;
 import kanban.task.Subtask;
 import kanban.task.Task;
@@ -18,6 +21,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
     public FileBackedTaskManager(String filename) {
         super();
         this.filename = filename;
+        this.historyManager = new FileBackedHistoryManager(App.getHistoryFilename());
         this.restore();
     }
 

@@ -1,6 +1,7 @@
 package kanban.manager;
 
 import kanban.manager.history.IHistoryManager;
+import kanban.manager.history.InMemoryHistoryManager;
 import kanban.task.Epic;
 import kanban.manager.enums.Status;
 import kanban.task.Subtask;
@@ -31,13 +32,13 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     private final HashMap<Integer, Subtask> subtasks;
 
-    private final IHistoryManager historyManager;
+    protected IHistoryManager historyManager;
 
     public InMemoryTaskManager() {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();
-        this.historyManager = ManagerFactory.getHistoryManagerInstance();
+        this.historyManager = new InMemoryHistoryManager();
     }
 
     /**
