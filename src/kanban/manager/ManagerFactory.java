@@ -1,5 +1,6 @@
 package kanban.manager;
 
+import kanban.manager.history.FileBackedHistoryManager;
 import kanban.manager.history.IHistoryManager;
 import kanban.manager.history.InMemoryHistoryManager;
 
@@ -19,6 +20,7 @@ public class ManagerFactory {
     }
 
     private static IHistoryManager getDefaultHistoryManager() {
-        return new InMemoryHistoryManager();
+        // return new InMemoryHistoryManager();
+        return new FileBackedHistoryManager("storage/history.csv");
     }
 }
