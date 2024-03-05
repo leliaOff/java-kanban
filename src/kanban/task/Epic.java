@@ -1,5 +1,7 @@
 package kanban.task;
 
+import kanban.manager.enums.Status;
+
 import java.util.ArrayList;
 
 public class Epic extends Task {

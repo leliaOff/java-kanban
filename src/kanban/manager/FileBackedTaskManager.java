@@ -1,11 +1,9 @@
 package kanban.manager;
 
-import kanban.manager.exceptions.FileBackedIOException;
 import kanban.task.Epic;
 import kanban.task.Subtask;
 import kanban.task.Task;
-import kanban.task.Type;
-
+import kanban.manager.enums.Type;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;

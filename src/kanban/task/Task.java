@@ -1,6 +1,8 @@
 package kanban.task;
 
-import java.util.ArrayList;
+import kanban.manager.enums.Status;
+import kanban.manager.enums.Type;
+
 import java.util.Objects;
 
 public class Task {

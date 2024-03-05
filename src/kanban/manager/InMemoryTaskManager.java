@@ -2,7 +2,7 @@ package kanban.manager;
 
 import kanban.manager.history.IHistoryManager;
 import kanban.task.Epic;
-import kanban.task.Status;
+import kanban.manager.enums.Status;
 import kanban.task.Subtask;
 import kanban.task.Task;
 import java.util.ArrayList;
