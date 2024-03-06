@@ -1,4 +1,4 @@
-import kanban.manager.FileBackedTaskManager;
+import kanban.manager.ITaskManager;
 import kanban.manager.ManagerFactory;
 import kanban.task.Epic;
 import kanban.manager.enums.Status;
@@ -7,27 +7,27 @@ import kanban.task.Task;
 
 public class Main {
 
-    private static FileBackedTaskManager taskManager;
+    private static ITaskManager<Integer> taskManager;
 
     public static void main(String[] args) {
-//        taskManager = (FileBackedTaskManager) ManagerFactory.getManagerInstance();
-//
-//        // Заполнение
-//        createTasks();
-//        printTasks();
-//
-//        // Смена статуса
-//        taskStatusChange();
-//        System.out.println("\nПроизошла смена статуса задач:");
-//        printTasks();
-//
-//        // Удаление
-//        removeTask();
-//        System.out.println("\nПроизошло удаление задачи и эпика:");
-//        printTasks();
-//
-//        System.out.println("\nИстория обращения к задачам:");
-//        System.out.println(taskManager.getHistory());
+        taskManager = (ITaskManager<Integer>) ManagerFactory.getManagerInstance();
+
+        // Заполнение
+        createTasks();
+        printTasks();
+
+        // Смена статуса
+        taskStatusChange();
+        System.out.println("\nПроизошла смена статуса задач:");
+        printTasks();
+
+        // Удаление
+        removeTask();
+        System.out.println("\nПроизошло удаление задачи и эпика:");
+        printTasks();
+
+        System.out.println("\nИстория обращения к задачам:");
+        System.out.println(taskManager.getHistory());
     }
 
     /**
