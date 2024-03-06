@@ -1,6 +1,8 @@
 package kanban.manager;
 
 import config.tests.App;
+import kanban.manager.exceptions.ManagerDeleteException;
+import kanban.manager.exceptions.ManagerIOException;
 import kanban.task.Epic;
 import kanban.task.Subtask;
 import kanban.task.Task;
@@ -65,7 +67,7 @@ class FileBackedTaskManagerTest {
             Files.deleteIfExists(Paths.get(App.getTaskFilename()));
             Files.deleteIfExists(Paths.get(App.getHistoryFilename()));
         } catch (IOException exception) {
-            System.out.printf("При удалении одного или нескольких файлов произошла ошибка: %s", exception.getMessage());
+            throw new ManagerDeleteException(exception.getMessage());
         }
     }
 

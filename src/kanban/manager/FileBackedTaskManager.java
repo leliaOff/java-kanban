@@ -1,5 +1,7 @@
 package kanban.manager;
 
+import kanban.manager.exceptions.ManagerIOException;
+import kanban.manager.exceptions.ManagerSaveException;
 import kanban.manager.history.FileBackedHistoryManager;
 import kanban.task.Epic;
 import kanban.task.Subtask;
@@ -209,7 +211,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
             }
 
         } catch (IOException exception) {
-            System.out.printf("Во время записи файла %s произошла ошибка\n", this.filename);
+            throw new ManagerSaveException(this.filename);
         }
     }
 }
