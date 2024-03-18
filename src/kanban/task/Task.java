@@ -153,6 +153,9 @@ public class Task {
      * @return LocalDateTime Время окончания выполнения задачи
      */
     public LocalDateTime getEndTime() {
+        if (this.startTime == null) {
+            return null;
+        }
         return this.startTime.plus(this.duration);
     }
 
