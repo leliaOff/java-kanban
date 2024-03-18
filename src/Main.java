@@ -1,16 +1,16 @@
-import kanban.manager.InMemoryTaskManager;
+import kanban.manager.ITaskManager;
 import kanban.manager.ManagerFactory;
 import kanban.task.Epic;
-import kanban.task.Status;
+import kanban.manager.enums.Status;
 import kanban.task.Subtask;
 import kanban.task.Task;
 
 public class Main {
 
-    private static InMemoryTaskManager taskManager;
+    private static ITaskManager<Integer> taskManager;
 
     public static void main(String[] args) {
-        taskManager = (InMemoryTaskManager) ManagerFactory.getManagerInstance();
+        taskManager = (ITaskManager<Integer>) ManagerFactory.getManagerInstance();
 
         // Заполнение
         createTasks();

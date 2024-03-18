@@ -37,8 +37,15 @@ public class InMemoryHistoryManager implements IHistoryManager {
         if (!this.map.containsKey(id)) {
             return;
         }
-        this.removeNode(this.history.get(this.map.get(id)));
+        Integer index  = this.map.get(id);
+        this.removeNode(this.history.get(index));
         this.map.remove(id);
+
+        for (Integer key : this.map.keySet()) {
+            if (this.map.get(key) > index) {
+                this.map.put(key, this.map.get(key) - 1);
+            }
+        }
     }
 
     /**

@@ -1,5 +1,7 @@
 package kanban.task;
 
+import kanban.manager.enums.Status;
+
 import java.util.ArrayList;
 
 public class Epic extends Task {
@@ -13,6 +15,14 @@ public class Epic extends Task {
      */
     public Epic(String title, String description) {
         super(title, description);
+        this.subtaskIds = new ArrayList<>();
+    }
+
+    /**
+     * construct
+     */
+    public Epic(String line) {
+        super(line);
         this.subtaskIds = new ArrayList<>();
     }
 

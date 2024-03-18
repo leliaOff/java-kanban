@@ -1,7 +1,7 @@
 package kanban.manager;
 
 import kanban.task.Epic;
-import kanban.task.Status;
+import kanban.manager.enums.Status;
 import kanban.task.Subtask;
 import kanban.task.Task;
 import org.junit.jupiter.api.Assertions;

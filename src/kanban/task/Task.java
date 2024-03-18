@@ -1,6 +1,8 @@
 package kanban.task;
 
-import java.util.ArrayList;
+import kanban.manager.enums.Status;
+import kanban.manager.enums.Type;
+
 import java.util.Objects;
 
 public class Task {
@@ -27,10 +29,26 @@ public class Task {
         this.status = Status.NEW;
     }
 
+    /**
+     * construct
+     */
+    public Task(String line) {
+        String[] data = line.split(";");
+        this.id = Integer.parseInt(data[0]);
+        this.title = data[2];
+        this.status = Status.valueOf(data[3]);
+        this.description = data[4];
+    }
+
     public void setId(int id) {
         this.id = id;
     }
 
+    /**
+     * Получить ИД задачи
+     *
+     * @return int ИД задачи
+     */
     public int getId() {
         return this.id;
     }
@@ -39,8 +57,45 @@ public class Task {
         this.status = status;
     }
 
+    /**
+     * Получить статус
+     *
+     * @return Status Статус
+     */
     public Status getStatus() {
         return this.status;
+    }
+
+    /**
+     * Получить Наименование задачи
+     *
+     * @return String Наименование задачи
+     */
+    public String getTitle() {
+        return this.title;
+    }
+
+    /**
+     * Получить Описание задачи
+     *
+     * @return String Описание задачи
+     */
+    public String getDescription() {
+        return this.description;
+    }
+
+    /**
+     * Возвращает тип задачи: задача, эпик или подзадача
+     * @return  Тип задачи
+     */
+    public Type getType() {
+        if (this instanceof Epic) {
+            return Type.EPIC;
+        }
+        if (this instanceof Subtask) {
+            return Type.SUBTASK;
+        }
+        return Type.TASK;
     }
 
     @Override
@@ -58,11 +113,14 @@ public class Task {
 
     @Override
     public String toString() {
-        return "Task{" +
-                "id=" + id +
-                ", title='" + title + '\'' +
-                ", description='" + description + '\'' +
-                ", status=" + status +
-                '}';
+        return String.format(
+                "%d;%s;%s;%s;%s;%s\n",
+                this.getId(),
+                this.getType(),
+                this.getTitle(),
+                this.getStatus(),
+                this.getDescription(),
+                this.getType().equals(Type.SUBTASK) ? ((Subtask) this).getEpicId() : ""
+        );
     }
 }
