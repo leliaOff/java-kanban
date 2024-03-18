@@ -6,9 +6,12 @@ import kanban.task.Epic;
 import kanban.manager.enums.Status;
 import kanban.task.Subtask;
 import kanban.task.Task;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class InMemoryTaskManager implements ITaskManager<Integer> {
 
@@ -135,7 +138,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
         this.subtasks.clear();
         for (Map.Entry<Integer, Epic> epic : this.epics.entrySet()) {
             epic.getValue().removeAllSubtasks();
-            this.refreshEpicStatus(epic.getValue());
+            this.refreshEpic(epic.getValue());
         }
     }
 
@@ -150,7 +153,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
             this.subtasks.remove(subtask.getId());
         }
         epic.removeAllSubtasks();
-        this.refreshEpicStatus(epic);
+        this.refreshEpic(epic);
     }
 
     /**
@@ -227,7 +230,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
         subtask.setEpicId(epic.getId());
         this.subtasks.put(sequenceId, subtask);
         epic.addSubtask(sequenceId);
-        this.refreshEpicStatus(epic);
+        this.refreshEpic(epic);
         increaseSequenceId();
     }
 
@@ -253,7 +256,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     @Override
     public void updateSubtask(Subtask subtask) {
         this.subtasks.put(subtask.getId(), subtask);
-        this.refreshEpicStatus(this.getEpic(subtask.getEpicId()));
+        this.refreshEpic(this.getEpic(subtask.getEpicId()));
     }
 
     /**
@@ -289,6 +292,14 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     }
 
     /**
+     * Обновить вычисляемые поля эпика
+     */
+    private void refreshEpic(Epic epic) {
+        this.refreshEpicStatus(epic);
+        this.calculateEpicTime(epic);
+    }
+
+    /**
      * Обновить статус эпика
      */
     private void refreshEpicStatus(Epic epic) {
@@ -306,6 +317,44 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
             return;
         }
         epic.setStatusInProgress();
+    }
+
+    /**
+     * Рассчитать время начала и окончания эпика
+     *
+     * @param epic Эпик
+     */
+    private void calculateEpicTime(Epic epic) {
+        ArrayList<Subtask> subtasks = this.getSubtaskByEpic(epic);
+        if (subtasks.isEmpty()) {
+            epic.setStartTime(null);
+            epic.setEndTime(null);
+            return;
+        }
+        
+        Optional<LocalDateTime> startTime = subtasks.stream()
+                .filter(subtask -> subtask.getStartTime() != null)
+                .sorted((a, b) -> {
+                    if (a.getStartTime().equals(b.getStartTime())) {
+                        return 0;
+                    }
+                    return a.getStartTime().isBefore(b.getStartTime()) ? 1 : -1;
+                })
+                .map(Task::getStartTime)
+                .findFirst();
+        epic.setStartTime(startTime.orElse(null));
+
+        Optional<LocalDateTime> endTime = subtasks.stream()
+                .filter(subtask -> subtask.getEndTime() != null)
+                .sorted((a, b) -> {
+                    if (a.getEndTime().equals(b.getEndTime())) {
+                        return 0;
+                    }
+                    return a.getEndTime().isAfter(b.getEndTime()) ? 1 : -1;
+                })
+                .map(Task::getEndTime)
+                .findFirst();
+        epic.setEndTime(endTime.orElse(null));
     }
 
     /**

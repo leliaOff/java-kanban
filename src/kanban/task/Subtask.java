@@ -1,5 +1,7 @@
 package kanban.task;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Subtask extends Task {
@@ -7,16 +9,14 @@ public class Subtask extends Task {
     /** ID Эпика */
     private int epicId;
 
-    /**
-     * construct
-     */
     public Subtask(String title, String description) {
         super(title, description);
     }
 
-    /**
-     * construct
-     */
+    public Subtask(String title, String description, LocalDateTime startTime, Duration duration) {
+        super(title, description, startTime, duration);
+    }
+
     public Subtask(String line) {
         super(line);
         String[] data = line.split(";");

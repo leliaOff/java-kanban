@@ -3,35 +3,57 @@ package kanban.task;
 import kanban.manager.enums.Status;
 import kanban.manager.enums.Type;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 public class Task {
 
-    /** ID задачи */
+    /**
+     * ID задачи
+     */
     protected int id;
 
-    /** Наименование */
+    /**
+     * Наименование
+     */
     protected String title;
 
 
-    /** Описание */
+    /**
+     * Описание
+     */
     protected String description;
 
-    /** Статус */
+    /**
+     * Статус
+     */
     protected Status status;
 
     /**
-     * construct
+     * Продолжительность задачи
      */
+    protected Duration duration;
+
+    /**
+     * Время старта выполнения задачи
+     */
+    protected LocalDateTime startTime;
+
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
         this.status = Status.NEW;
     }
 
-    /**
-     * construct
-     */
+    public Task(String title, String description, LocalDateTime startTime, Duration duration) {
+        this.title = title;
+        this.description = description;
+        this.status = Status.NEW;
+        this.startTime = startTime;
+        this.duration = duration;
+    }
+
     public Task(String line) {
         String[] data = line.split(";");
         this.id = Integer.parseInt(data[0]);
@@ -86,7 +108,8 @@ public class Task {
 
     /**
      * Возвращает тип задачи: задача, эпик или подзадача
-     * @return  Тип задачи
+     *
+     * @return Тип задачи
      */
     public Type getType() {
         if (this instanceof Epic) {
@@ -96,6 +119,41 @@ public class Task {
             return Type.SUBTASK;
         }
         return Type.TASK;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+
+    /**
+     * Возвращает продолжительность задачи
+     *
+     * @return Duration Продолжительность задачи
+     */
+    public Duration getDuration() {
+        return this.duration;
+    }
+
+    public void setStartTime(LocalDateTime startTime) {
+        this.startTime = startTime;
+    }
+
+    /**
+     * Возвращает время начала выполнения задачи
+     *
+     * @return LocalDateTime Время начала выполнения задачи
+     */
+    public LocalDateTime getStartTime() {
+        return this.startTime;
+    }
+
+    /**
+     * Возвращает время окончания выполнения задачи
+     *
+     * @return LocalDateTime Время окончания выполнения задачи
+     */
+    public LocalDateTime getEndTime() {
+        return this.startTime.plus(this.duration);
     }
 
     @Override
