@@ -189,7 +189,7 @@ public class Task {
     @Override
     public String toString() {
         return String.format(
-                "%d;%s;%s;%s;%s;%s;%s;$d\n",
+                "%d;%s;%s;%s;%s;%s;%s;%d\n",
                 this.getId(),
                 this.getType(),
                 this.getTitle(),
@@ -197,7 +197,7 @@ public class Task {
                 this.getDescription(),
                 this.getType().equals(Type.SUBTASK) ? ((Subtask) this).getEpicId() : "",
                 this.startTime != null ? this.startTime.format(formatter) : "",
-                this.duration != null ? this.duration.toSeconds() : ""
+                this.duration != null ? this.duration.toSeconds() : 0
         );
     }
 }
