@@ -5,6 +5,8 @@ import kanban.manager.enums.Type;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Objects;
 
 public class Task {
@@ -40,6 +42,8 @@ public class Task {
      */
     protected LocalDateTime startTime;
 
+    protected final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
     public Task(String title, String description) {
         this.title = title;
         this.description = description;
@@ -60,6 +64,16 @@ public class Task {
         this.title = data[2];
         this.status = Status.valueOf(data[3]);
         this.description = data[4];
+        if (data[6] != null) {
+            try {
+                this.startTime = LocalDateTime.parse(data[6], formatter);
+            } catch (DateTimeParseException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+        if (data[7] != null) {
+            this.duration = Duration.ofSeconds(Long.parseLong(data[7]));
+        }
     }
 
     public void setId(int id) {
@@ -175,13 +189,15 @@ public class Task {
     @Override
     public String toString() {
         return String.format(
-                "%d;%s;%s;%s;%s;%s\n",
+                "%d;%s;%s;%s;%s;%s;%s;$d\n",
                 this.getId(),
                 this.getType(),
                 this.getTitle(),
                 this.getStatus(),
                 this.getDescription(),
-                this.getType().equals(Type.SUBTASK) ? ((Subtask) this).getEpicId() : ""
+                this.getType().equals(Type.SUBTASK) ? ((Subtask) this).getEpicId() : "",
+                this.startTime != null ? this.startTime.format(formatter) : "",
+                this.duration != null ? this.duration.toSeconds() : ""
         );
     }
 }
