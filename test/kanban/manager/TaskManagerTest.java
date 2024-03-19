@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
 
 abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
 
@@ -86,42 +87,47 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
     @Test
     void getTask() {
         Task currentTask = tasks.get(0);
-        Task inMemoryTask = taskManager.getTask(currentTask.getId());
-        Assertions.assertEquals(currentTask, inMemoryTask);
+        Optional<Task> inMemoryTask = taskManager.getTask(currentTask.getId());
+        Assertions.assertTrue(inMemoryTask.isPresent());
+        Assertions.assertEquals(currentTask, inMemoryTask.get());
     }
 
     @Test
     void getEpic() {
         Epic currentEpic = epics.get(0);
-        Epic inMemoryEpic = taskManager.getEpic(currentEpic.getId());
-        Assertions.assertEquals(currentEpic, inMemoryEpic);
+        Optional<Epic> inMemoryEpic = taskManager.getEpic(currentEpic.getId());
+        Assertions.assertTrue(inMemoryEpic.isPresent());
+        Assertions.assertEquals(currentEpic, inMemoryEpic.get());
     }
 
     @Test
     void getSubtask() {
         Subtask currentSubtask = subtasks.get(0);
-        Subtask inMemorySubtask = taskManager.getSubtask(currentSubtask.getId());
-        Assertions.assertEquals(currentSubtask, inMemorySubtask);
+        Optional<Subtask> inMemorySubtask = taskManager.getSubtask(currentSubtask.getId());
+        Assertions.assertTrue(inMemorySubtask.isPresent());
+        Assertions.assertEquals(currentSubtask, inMemorySubtask.get());
     }
 
     @Test
     void addTask() {
         Task newTask = new Task("Тестовая задача", "Описание тестовой задачи");
         taskManager.addTask(newTask);
-        Task inMemoryTask = taskManager.getTask(newTask.getId());
-        Assertions.assertEquals(newTask.getId(), inMemoryTask.getId());
-        Assertions.assertEquals(newTask, inMemoryTask);
-        Assertions.assertEquals(Status.NEW, inMemoryTask.getStatus(), "Статус созданной задачи должен быть: новая");
+        Optional<Task> inMemoryTask = taskManager.getTask(newTask.getId());
+        Assertions.assertTrue(inMemoryTask.isPresent());
+        Assertions.assertEquals(newTask.getId(), inMemoryTask.get().getId());
+        Assertions.assertEquals(newTask, inMemoryTask.get());
+        Assertions.assertEquals(Status.NEW, inMemoryTask.get().getStatus(), "Статус созданной задачи должен быть: новая");
     }
 
     @Test
     void addEpic() {
         Epic newEpic = new Epic("Тестовый эпик", "Описание тестового эпика");
         taskManager.addEpic(newEpic);
-        Epic inMemoryEpic = taskManager.getEpic(newEpic.getId());
-        Assertions.assertEquals(newEpic.getId(), inMemoryEpic.getId());
-        Assertions.assertEquals(newEpic, inMemoryEpic);
-        Assertions.assertEquals(Status.NEW, inMemoryEpic.getStatus(), "Статус созданного эпика должен быть: новый");
+        Optional<Epic> inMemoryEpic = taskManager.getEpic(newEpic.getId());
+        Assertions.assertTrue(inMemoryEpic.isPresent());
+        Assertions.assertEquals(newEpic.getId(), inMemoryEpic.get().getId());
+        Assertions.assertEquals(newEpic, inMemoryEpic.get());
+        Assertions.assertEquals(Status.NEW, inMemoryEpic.get().getStatus(), "Статус созданного эпика должен быть: новый");
     }
 
     @Test
@@ -129,38 +135,54 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
         Epic epic = epics.get(0);
         Subtask newSubtask = new Subtask("Тестовая подзадача", "Описание тестовой задачи");
         taskManager.addSubtaskByEpic(newSubtask, epic);
-        Subtask inMemorySubtask = taskManager.getSubtask(newSubtask.getId());
-        Assertions.assertEquals(newSubtask.getId(), inMemorySubtask.getId());
-        Assertions.assertEquals(newSubtask, inMemorySubtask);
-        Assertions.assertEquals(Status.NEW, inMemorySubtask.getStatus(), "Статус созданной подзадачи должен быть: новая");
+        Optional<Subtask> inMemorySubtask = taskManager.getSubtask(newSubtask.getId());
+        Assertions.assertTrue(inMemorySubtask.isPresent());
+        Assertions.assertEquals(newSubtask.getId(), inMemorySubtask.get().getId());
+        Assertions.assertEquals(newSubtask, inMemorySubtask.get());
+        Assertions.assertEquals(Status.NEW, inMemorySubtask.get().getStatus(), "Статус созданной подзадачи должен быть: новая");
     }
 
     @Test
     void updateTaskStatus() {
         Task currentTask = tasks.get(0);
-        Task inMemoryTask = taskManager.getTask(currentTask.getId());
-        inMemoryTask.setStatus(Status.IN_PROGRESS);
-        taskManager.updateTask(inMemoryTask);
-        Assertions.assertEquals(Status.IN_PROGRESS, taskManager.getTask(currentTask.getId()).getStatus());
+        Optional<Task> inMemoryTask = taskManager.getTask(currentTask.getId());
+        inMemoryTask.ifPresent(task -> {
+            task.setStatus(Status.IN_PROGRESS);
+            taskManager.updateTask(task);
+        });
+        Assertions.assertTrue(taskManager.getTask(currentTask.getId()).isPresent());
+        Assertions.assertEquals(Status.IN_PROGRESS, taskManager.getTask(currentTask.getId()).get().getStatus());
     }
 
     @Test
     void updateEpicStatus() {
         Epic currentEpic = epics.get(0);
-        Epic inMemoryEpic = taskManager.getEpic(currentEpic.getId());
-        inMemoryEpic.setStatus(Status.IN_PROGRESS);
-        taskManager.updateTask(inMemoryEpic);
-        Assertions.assertEquals(Status.NEW, taskManager.getEpic(currentEpic.getId()).getStatus(), "Нельзя менять статус эпика вручную");
+        Optional<Epic> inMemoryEpic = taskManager.getEpic(currentEpic.getId());
+        inMemoryEpic.ifPresent(epic -> {
+            epic.setStatus(Status.IN_PROGRESS);
+            taskManager.updateTask(epic);
+        });
+        Assertions.assertTrue(taskManager.getEpic(currentEpic.getId()).isPresent());
+        Assertions.assertEquals(Status.NEW, taskManager.getEpic(currentEpic.getId()).get().getStatus(), "Нельзя менять статус эпика вручную");
 
         ArrayList<Integer> currentEpicSubtaskIds = currentEpic.getSubtaskIds();
         for (int i = 0; i < currentEpicSubtaskIds.size(); i++) {
-            Subtask subtask = taskManager.getSubtask(currentEpicSubtaskIds.get(i));
-            subtask.setStatus(Status.DONE);
-            taskManager.updateSubtask(subtask);
+            Optional<Subtask> subtask = taskManager.getSubtask(currentEpicSubtaskIds.get(i));
+            subtask.ifPresent(s -> {
+                s.setStatus(Status.DONE);
+                taskManager.updateSubtask(s);
+            });
+            Assertions.assertTrue(taskManager.getEpic(currentEpic.getId()).isPresent());
             if (i == currentEpicSubtaskIds.size() - 1) {
-                Assertions.assertEquals(Status.DONE, taskManager.getEpic(currentEpic.getId()).getStatus(), "Статус эпика должен быть: выполнено");
+                Assertions.assertEquals(
+                        Status.DONE, taskManager.getEpic(currentEpic.getId()).get().getStatus(),
+                        "Статус эпика должен быть: выполнено"
+                );
             } else {
-                Assertions.assertEquals(Status.IN_PROGRESS, taskManager.getEpic(currentEpic.getId()).getStatus(), "Статус эпика должен быть: в работе");
+                Assertions.assertEquals(
+                        Status.IN_PROGRESS, taskManager.getEpic(currentEpic.getId()).get().getStatus(),
+                        "Статус эпика должен быть: в работе"
+                );
             }
         }
     }
@@ -168,19 +190,22 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
     @Test
     void updateSubtaskStatus() {
         Subtask currentSubtask = subtasks.get(0);
-        Subtask inMemorySubtask = taskManager.getSubtask(currentSubtask.getId());
-        inMemorySubtask.setStatus(Status.DONE);
-        taskManager.updateSubtask(inMemorySubtask);
-        Assertions.assertEquals(Status.DONE, taskManager.getSubtask(currentSubtask.getId()).getStatus());
+        Optional<Subtask> inMemorySubtask = taskManager.getSubtask(currentSubtask.getId());
+        inMemorySubtask.ifPresent(subtask -> {
+            subtask.setStatus(Status.DONE);
+            taskManager.updateSubtask(subtask);
+        });
+        Assertions.assertTrue(taskManager.getSubtask(currentSubtask.getId()).isPresent());
+        Assertions.assertEquals(Status.DONE, taskManager.getSubtask(currentSubtask.getId()).get().getStatus());
     }
 
     @Test
     void removeTask() {
         Task currentTask = tasks.get(0);
         int id = currentTask.getId();
-        Assertions.assertNotNull(taskManager.getTask(id), "Результат не может быть null");
+        Assertions.assertTrue(taskManager.getTask(id).isPresent(), "Результат не может быть null");
         taskManager.removeTask(id);
-        Assertions.assertNull(taskManager.getTask(id), "Результат должен быть null, так как задача была удалена");
+        Assertions.assertTrue(taskManager.getTask(id).isEmpty(), "Результат должен быть null, так как задача была удалена");
     }
 
     @Test
@@ -204,7 +229,7 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
 
     @Test
     void addTaskWithValidInterval() {
-        Task inMemoryTask;
+        Optional<Task> inMemoryTask;
         Task a = new Task(
                 "Задача №1",
                 "Описание тестовой задачи №1",
@@ -213,8 +238,9 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
         );
         taskManager.addTask(a);
         inMemoryTask = taskManager.getTask(a.getId());
-        Assertions.assertEquals(a.getId(), inMemoryTask.getId());
-        Assertions.assertEquals(a, inMemoryTask);
+        Assertions.assertTrue(inMemoryTask.isPresent());
+        Assertions.assertEquals(a.getId(), inMemoryTask.get().getId());
+        Assertions.assertEquals(a, inMemoryTask.get());
 
         Task b = new Task(
                 "Задача №2",
@@ -224,8 +250,9 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
         );
         taskManager.addTask(b);
         inMemoryTask = taskManager.getTask(b.getId());
-        Assertions.assertEquals(b.getId(), inMemoryTask.getId());
-        Assertions.assertEquals(b, inMemoryTask);
+        Assertions.assertTrue(inMemoryTask.isPresent());
+        Assertions.assertEquals(b.getId(), inMemoryTask.get().getId());
+        Assertions.assertEquals(b, inMemoryTask.get());
 
         Task c = new Task(
                 "Задача №3",
@@ -235,13 +262,14 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
         );
         taskManager.addTask(c);
         inMemoryTask = taskManager.getTask(c.getId());
-        Assertions.assertEquals(c.getId(), inMemoryTask.getId());
-        Assertions.assertEquals(c, inMemoryTask);
+        Assertions.assertTrue(inMemoryTask.isPresent());
+        Assertions.assertEquals(c.getId(), inMemoryTask.get().getId());
+        Assertions.assertEquals(c, inMemoryTask.get());
     }
 
     @Test
     void addTaskWithInvalidInterval() {
-        Task inMemoryTask;
+        Optional<Task> inMemoryTask;
         Task a = new Task(
                 "Задача №1",
                 "Описание тестовой задачи №1",
@@ -250,8 +278,9 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
         );
         taskManager.addTask(a);
         inMemoryTask = taskManager.getTask(a.getId());
-        Assertions.assertEquals(a.getId(), inMemoryTask.getId());
-        Assertions.assertEquals(a, inMemoryTask);
+        Assertions.assertTrue(inMemoryTask.isPresent());
+        Assertions.assertEquals(a.getId(), inMemoryTask.get().getId());
+        Assertions.assertEquals(a, inMemoryTask.get());
 
         Task b = new Task(
                 "Задача №2",
@@ -261,8 +290,9 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
         );
         taskManager.addTask(b);
         inMemoryTask = taskManager.getTask(b.getId());
-        Assertions.assertEquals(b.getId(), inMemoryTask.getId());
-        Assertions.assertEquals(b, inMemoryTask);
+        Assertions.assertTrue(inMemoryTask.isPresent());
+        Assertions.assertEquals(b.getId(), inMemoryTask.get().getId());
+        Assertions.assertEquals(b, inMemoryTask.get());
 
         Task c = new Task(
                 "Задача №3",
@@ -272,12 +302,12 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
         );
         taskManager.addTask(c);
         inMemoryTask = taskManager.getTask(c.getId());
-        Assertions.assertNull(inMemoryTask);
+        Assertions.assertFalse(inMemoryTask.isPresent());
     }
 
     @Test
     void calculateEndTime() {
-        Task inMemoryTask;
+        Optional<Task> inMemoryTask;
         Task a = new Task(
                 "Задача №1",
                 "Описание тестовой задачи №1",
@@ -286,9 +316,10 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
         );
         taskManager.addTask(a);
         inMemoryTask = taskManager.getTask(a.getId());
-        Assertions.assertEquals(LocalDateTime.of(2024, 4, 14, 13, 0), inMemoryTask.getEndTime());
-        inMemoryTask.setDuration(Duration.ofMinutes(35));
-        Assertions.assertEquals(LocalDateTime.of(2024, 4, 14, 12, 35), inMemoryTask.getEndTime());
+        Assertions.assertTrue(inMemoryTask.isPresent());
+        Assertions.assertEquals(LocalDateTime.of(2024, 4, 14, 13, 0), inMemoryTask.get().getEndTime());
+        inMemoryTask.get().setDuration(Duration.ofMinutes(35));
+        Assertions.assertEquals(LocalDateTime.of(2024, 4, 14, 12, 35), inMemoryTask.get().getEndTime());
     }
 
     @Test

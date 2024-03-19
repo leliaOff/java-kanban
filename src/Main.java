@@ -5,6 +5,8 @@ import kanban.manager.enums.Status;
 import kanban.task.Subtask;
 import kanban.task.Task;
 
+import java.util.Optional;
+
 public class Main {
 
     private static ITaskManager<Integer> taskManager;
@@ -58,35 +60,45 @@ public class Main {
      * Смена статусов задач
      */
     private static void taskStatusChange() {
-        Task task1 = taskManager.getTask(1);
-        task1.setStatus(Status.IN_PROGRESS);
-        taskManager.updateTask(task1);
+        Optional<Task> task1 = taskManager.getTask(1);
+        task1.ifPresent(task -> {
+            task.setStatus(Status.IN_PROGRESS);
+            taskManager.updateTask(task);
+        });
 
-        Task task2 = taskManager.getTask(2);
-        task2.setStatus(Status.DONE);
-        taskManager.updateTask(task2);
+        Optional<Task> task2 = taskManager.getTask(2);
+        task2.ifPresent(task -> {
+            task.setStatus(Status.DONE);
+            taskManager.updateTask(task);
+        });
 
-        Subtask subtask4 = taskManager.getSubtask(4);
-        subtask4.setStatus(Status.DONE);
-        taskManager.updateSubtask(subtask4);
+        Optional<Subtask> subtask4 = taskManager.getSubtask(4);
+        subtask4.ifPresent(subtask -> {
+            subtask.setStatus(Status.DONE);
+            taskManager.updateSubtask(subtask);
+        });
 
-        Subtask subtask5 = taskManager.getSubtask(5);
-        subtask5.setStatus(Status.DONE);
-        taskManager.updateSubtask(subtask5);
+        Optional<Subtask> subtask5 = taskManager.getSubtask(5);
+        subtask5.ifPresent(subtask -> {
+            subtask.setStatus(Status.DONE);
+            taskManager.updateSubtask(subtask);
+        });
 
-        Subtask subtask7 = taskManager.getSubtask(7);
-        subtask7.setStatus(Status.IN_PROGRESS);
-        taskManager.updateSubtask(subtask7);
+        Optional<Subtask> subtask7 = taskManager.getSubtask(7);
+        subtask7.ifPresent(subtask -> {
+            subtask.setStatus(Status.IN_PROGRESS);
+            taskManager.updateSubtask(subtask);
+        });
     }
 
     /**
      * Удаление задач
      */
     private static void removeTask() {
-        Task task2 = taskManager.getTask(2);
-        taskManager.removeTask(task2.getId());
-        Epic epic6 = taskManager.getEpic(6);
-        taskManager.removeEpic(epic6.getId());
+        Optional<Task> task2 = taskManager.getTask(2);
+        task2.ifPresent(task -> taskManager.removeTask(task.getId()));
+        Optional<Epic> epic6 = taskManager.getEpic(6);
+        epic6.ifPresent(epic -> taskManager.removeEpic(epic.getId()));
     }
 
     /**

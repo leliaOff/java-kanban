@@ -163,13 +163,13 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      * @return Task|null
      */
     @Override
-    public Task getTask(int id) {
+    public Optional<Task> getTask(int id) {
         Task task = this.tasks.get(id);
         if (task == null) {
-            return null;
+            return Optional.empty();
         }
         this.historyManager.add(task);
-        return task;
+        return Optional.of(task);
     }
 
     /**
@@ -178,13 +178,13 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      * @return Epic|null
      */
     @Override
-    public Epic getEpic(int id) {
+    public Optional<Epic> getEpic(int id) {
         Epic epic = this.epics.get(id);
         if (epic == null) {
-            return null;
+            return Optional.empty();
         }
         this.historyManager.add(epic);
-        return epic;
+        return Optional.of(epic);
     }
 
     /**
@@ -193,13 +193,13 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      * @return Subtask|null
      */
     @Override
-    public Subtask getSubtask(int id) {
+    public Optional<Subtask> getSubtask(int id) {
         Subtask subtask = this.subtasks.get(id);
         if (subtask == null) {
-            return null;
+            return Optional.empty();
         }
         this.historyManager.add(subtask);
-        return subtask;
+        return Optional.of(subtask);
     }
 
     /**
@@ -278,7 +278,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
             return;
         }
         this.subtasks.put(subtask.getId(), subtask);
-        this.refreshEpic(this.getEpic(subtask.getEpicId()));
+        this.getEpic(subtask.getEpicId()).ifPresent(this::refreshEpic);
     }
 
     /**
@@ -296,11 +296,12 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void removeEpic(int id) {
-        Epic epic = this.getEpic(id);
-        this.removeAllSubtasksByEpic(epic);
-        this.historyManager.remove(id);
-        this.prioritizedTasksManager.remove(this.epics.get(id));
-        this.epics.remove(id);
+        this.getEpic(id).ifPresent(epic -> {
+            this.removeAllSubtasksByEpic(epic);
+            this.historyManager.remove(id);
+            this.prioritizedTasksManager.remove(this.epics.get(id));
+            this.epics.remove(id);
+        });
     }
 
     /**
@@ -308,12 +309,12 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void removeSubtask(int id) {
-        Subtask subtask = this.getSubtask(id);
-        Epic epic = this.getEpic(subtask.getEpicId());
-        epic.removeSubtask(id);
-        this.historyManager.remove(id);
-        this.prioritizedTasksManager.remove(this.subtasks.get(id));
-        this.subtasks.remove(id);
+        this.getSubtask(id).flatMap(subtask -> this.getEpic(subtask.getEpicId())).ifPresent(epic -> {
+            epic.removeSubtask(id);
+            this.historyManager.remove(id);
+            this.prioritizedTasksManager.remove(this.subtasks.get(id));
+            this.subtasks.remove(id);
+        });
     }
 
     /**

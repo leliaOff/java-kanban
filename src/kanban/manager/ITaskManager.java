@@ -6,6 +6,7 @@ import kanban.task.Task;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Optional;
 
 public interface ITaskManager<I>  {
 
@@ -69,21 +70,21 @@ public interface ITaskManager<I>  {
      *
      * @return Task|null
      */
-    public Task getTask(int id);
+    public Optional<Task> getTask(int id);
 
     /**
      * Поиск эпика по ИД
      *
      * @return Epic|null
      */
-    public Epic getEpic(int id);
+    public Optional<Epic> getEpic(int id);
 
     /**
      * Поиск подзадачи по ИД
      *
      * @return Subtask|null
      */
-    public Subtask getSubtask(int id);
+    public Optional<Subtask> getSubtask(int id);
 
     /**
      * Создать задачу
