@@ -40,6 +40,7 @@ public class PrioritizedTasksManager {
     {
         return this.prioritizedTasks.stream()
                 .filter(t -> t.isIntersect(task))
+                .filter(t -> t.getId() != task.getId())
                 .collect(Collectors.toCollection(ArrayList::new));
     }
 

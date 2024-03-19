@@ -7,6 +7,9 @@ import kanban.task.Task;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
@@ -17,8 +20,8 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
 
     protected T taskManager;
 
-    protected void createTask(String name, String description) {
-        Task task = new Task(name, description);
+    protected void createTask(String name, String description, LocalDateTime time, Duration duration) {
+        Task task = new Task(name, description, time, duration);
         taskManager.addTask(task);
         tasks.add(task);
     }
@@ -30,8 +33,8 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
         return epic;
     }
 
-    protected void createSubtask(String name, String description, Epic epic) {
-        Subtask subtask = new Subtask(name, description);
+    protected void createSubtask(String name, String description, LocalDateTime time, Duration duration, Epic epic) {
+        Subtask subtask = new Subtask(name, description, time, duration);
         taskManager.addSubtaskByEpic(subtask, epic);
         subtasks.add(subtask);
     }
@@ -197,5 +200,94 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
 
         history = taskManager.getHistory();
         Assertions.assertEquals(1, history.size());
+    }
+
+    @Test
+    void addTaskWithValidInterval() {
+        Task inMemoryTask;
+        Task a = new Task(
+                "Задача №1",
+                "Описание тестовой задачи №1",
+                LocalDateTime.of(2024, 4, 14, 12, 0),
+                Duration.ofMinutes(60)
+        );
+        taskManager.addTask(a);
+        inMemoryTask = taskManager.getTask(a.getId());
+        Assertions.assertEquals(a.getId(), inMemoryTask.getId());
+        Assertions.assertEquals(a, inMemoryTask);
+
+        Task b = new Task(
+                "Задача №2",
+                "Описание тестовой задачи №2",
+                LocalDateTime.of(2024, 4, 14, 13, 0),
+                Duration.ofMinutes(30)
+        );
+        taskManager.addTask(b);
+        inMemoryTask = taskManager.getTask(b.getId());
+        Assertions.assertEquals(b.getId(), inMemoryTask.getId());
+        Assertions.assertEquals(b, inMemoryTask);
+
+        Task c = new Task(
+                "Задача №3",
+                "Описание тестовой задачи №3",
+                LocalDateTime.of(2024, 4, 14, 13, 30),
+                Duration.ofMinutes(60)
+        );
+        taskManager.addTask(c);
+        inMemoryTask = taskManager.getTask(c.getId());
+        Assertions.assertEquals(c.getId(), inMemoryTask.getId());
+        Assertions.assertEquals(c, inMemoryTask);
+    }
+
+    @Test
+    void addTaskWithInvalidInterval() {
+        Task inMemoryTask;
+        Task a = new Task(
+                "Задача №1",
+                "Описание тестовой задачи №1",
+                LocalDateTime.of(2024, 4, 14, 12, 0),
+                Duration.ofMinutes(60)
+        );
+        taskManager.addTask(a);
+        inMemoryTask = taskManager.getTask(a.getId());
+        Assertions.assertEquals(a.getId(), inMemoryTask.getId());
+        Assertions.assertEquals(a, inMemoryTask);
+
+        Task b = new Task(
+                "Задача №2",
+                "Описание тестовой задачи №2",
+                LocalDateTime.of(2024, 4, 14, 13, 0),
+                Duration.ofMinutes(60)
+        );
+        taskManager.addTask(b);
+        inMemoryTask = taskManager.getTask(b.getId());
+        Assertions.assertEquals(b.getId(), inMemoryTask.getId());
+        Assertions.assertEquals(b, inMemoryTask);
+
+        Task c = new Task(
+                "Задача №3",
+                "Описание тестовой задачи №3",
+                LocalDateTime.of(2024, 4, 14, 13, 30),
+                Duration.ofMinutes(60)
+        );
+        taskManager.addTask(c);
+        inMemoryTask = taskManager.getTask(c.getId());
+        Assertions.assertNull(inMemoryTask);
+    }
+
+    @Test
+    void calculateEndTime() {
+        Task inMemoryTask;
+        Task a = new Task(
+                "Задача №1",
+                "Описание тестовой задачи №1",
+                LocalDateTime.of(2024, 4, 14, 12, 0),
+                Duration.ofMinutes(60)
+        );
+        taskManager.addTask(a);
+        inMemoryTask = taskManager.getTask(a.getId());
+        Assertions.assertEquals(LocalDateTime.of(2024, 4, 14, 13, 0), inMemoryTask.getEndTime());
+        inMemoryTask.setDuration(Duration.ofMinutes(35));
+        Assertions.assertEquals(LocalDateTime.of(2024, 4, 14, 12, 35), inMemoryTask.getEndTime());
     }
 }
