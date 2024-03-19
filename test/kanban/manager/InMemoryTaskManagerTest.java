@@ -34,7 +34,7 @@ class InMemoryTaskManagerTest {
     private void createSubtask(String name, String description, Epic epic) {
         Subtask subtask = new Subtask(name, description);
         taskManager.addSubtaskByEpic(subtask, epic);
-        subtasks.add( subtask);
+        subtasks.add(subtask);
     }
 
     @BeforeEach
