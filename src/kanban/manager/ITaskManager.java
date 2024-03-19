@@ -16,6 +16,12 @@ public interface ITaskManager<I>  {
     public ArrayList<Task> getTasks();
 
     /**
+     * Получить список всех задач в порядке приоритета
+     * @return ArrayList<Task>
+     */
+    public ArrayList<Task> getPrioritizedTasks();
+
+    /**
      * Получить список всех эпиков
      * @return ArrayList<Epic>
      */
