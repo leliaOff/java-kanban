@@ -1,16 +1,13 @@
 package kanban.manager;
 
-import kanban.manager.enums.Type;
 import kanban.manager.history.IHistoryManager;
 import kanban.manager.history.InMemoryHistoryManager;
 import kanban.task.Epic;
 import kanban.manager.enums.Status;
 import kanban.task.Subtask;
 import kanban.task.Task;
-
 import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements ITaskManager<Integer> {
 
