@@ -219,6 +219,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void addTask(Task task) {
+        if (!this.prioritizedTasksManager.getIntersects(task).isEmpty()) {
+            return;
+        }
         task.setId(sequenceId);
         this.tasks.put(sequenceId, task);
         increaseSequenceId();
@@ -230,6 +233,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void addEpic(Epic epic) {
+        if (!this.prioritizedTasksManager.getIntersects(epic).isEmpty()) {
+            return;
+        }
         epic.setId(sequenceId);
         this.epics.put(sequenceId, epic);
         increaseSequenceId();
@@ -241,6 +247,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void addSubtaskByEpic(Subtask subtask, Epic epic) {
+        if (!this.prioritizedTasksManager.getIntersects(subtask).isEmpty()) {
+            return;
+        }
         subtask.setId(sequenceId);
         subtask.setEpicId(epic.getId());
         this.subtasks.put(sequenceId, subtask);
@@ -255,6 +264,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void updateTask(Task task) {
+        if (!this.prioritizedTasksManager.getIntersects(task).isEmpty()) {
+            return;
+        }
         this.tasks.put(task.getId(), task);
     }
 
@@ -263,6 +275,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void updateEpic(Epic epic) {
+        if (!this.prioritizedTasksManager.getIntersects(epic).isEmpty()) {
+            return;
+        }
         this.epics.put(epic.getId(), epic);
     }
 
@@ -271,6 +286,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void updateSubtask(Subtask subtask) {
+        if (!this.prioritizedTasksManager.getIntersects(subtask).isEmpty()) {
+            return;
+        }
         this.subtasks.put(subtask.getId(), subtask);
         this.refreshEpic(this.getEpic(subtask.getEpicId()));
     }

@@ -32,6 +32,18 @@ public class PrioritizedTasksManager {
     }
 
     /**
+     * Получить список задач, которые пересекаются с переданной в метод
+     * @param task  Задача
+     * @return  Список задач, которые пересекаются с переданной в метод
+     */
+    public ArrayList<Task> getIntersects(Task task)
+    {
+        return this.prioritizedTasks.stream()
+                .filter(t -> t.isIntersect(task))
+                .collect(Collectors.toCollection(ArrayList::new));
+    }
+
+    /**
      * Добавить задачу в список
      *
      * @param task  Задача
@@ -50,10 +62,6 @@ public class PrioritizedTasksManager {
      */
     public void remove(Task task) {
         this.prioritizedTasks.remove(task);
-//        Optional<Task> removed = this.prioritizedTasks.stream()
-//                .filter(task -> task.getId() == id)
-//                .findFirst();
-//        removed.ifPresent(task -> this.prioritizedTasks.remove(task));
     }
 
 

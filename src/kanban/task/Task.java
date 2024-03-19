@@ -173,6 +173,28 @@ public class Task {
         return this.startTime.plus(this.duration);
     }
 
+    /**
+     * Проверяет, пересекаются ли задачи
+     * @param task  Вторая задача
+     * @return  Признак: пересекаются или нет
+     */
+    public boolean isIntersect(Task task) {
+        if (this.getStartTime() == null ||
+            this.getEndTime() == null ||
+            task.getStartTime() == null ||
+            task.getEndTime() == null
+        ) {
+            return false;
+        }
+        if (this.getStartTime().equals(task.getStartTime())) {
+            return true;
+        }
+        if (this.getStartTime().isBefore(task.getStartTime())) {
+            return this.getEndTime().isAfter(task.getStartTime());
+        }
+        return task.getEndTime().isAfter(this.getStartTime());
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
