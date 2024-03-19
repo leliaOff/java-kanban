@@ -290,4 +290,40 @@ abstract class TaskManagerTest<T extends ITaskManager<Integer>> {
         inMemoryTask.setDuration(Duration.ofMinutes(35));
         Assertions.assertEquals(LocalDateTime.of(2024, 4, 14, 12, 35), inMemoryTask.getEndTime());
     }
+
+    @Test
+    void calculateEpicDuration() {
+        Epic epic = createEpic("Тестовый эпик", "Тест");
+        createSubtask(
+                "Тестовая подзадача №1",
+                "Тест",
+                LocalDateTime.of(2024, 3, 15, 9, 0),
+                Duration.ofMinutes(5),
+                epic
+        );
+        createSubtask(
+                "Тестовая подзадача №2",
+                "Тест",
+                LocalDateTime.of(2024, 3, 15, 9, 5),
+                Duration.ofMinutes(10),
+                epic
+        );
+        createSubtask(
+                "Тестовая подзадача №3",
+                "Тест",
+                LocalDateTime.of(2024, 3, 15, 9, 10),
+                Duration.ofMinutes(60),
+                epic
+        );
+        createSubtask(
+                "Тестовая подзадача №4",
+                "Тест",
+                LocalDateTime.of(2024, 3, 15, 9, 15),
+                Duration.ofMinutes(15),
+                epic
+        );
+        Assertions.assertEquals(LocalDateTime.of(2024, 3, 15, 9, 0), epic.getStartTime());
+        Assertions.assertEquals(LocalDateTime.of(2024, 3, 15, 9, 30), epic.getEndTime());
+        Assertions.assertEquals(Duration.ofMinutes(30), epic.getDuration());
+    }
 }

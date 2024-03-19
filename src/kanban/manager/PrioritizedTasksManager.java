@@ -16,7 +16,7 @@ public class PrioritizedTasksManager {
                 if (a.getStartTime().equals(b.getStartTime())) {
                     return 0;
                 }
-                return a.getStartTime().isBefore(b.getStartTime()) ? 1 : -1;
+                return a.getStartTime().isAfter(b.getStartTime()) ? 1 : -1;
             }
         };
         this.prioritizedTasks = new TreeSet<>(prioritizedTasksComparator);

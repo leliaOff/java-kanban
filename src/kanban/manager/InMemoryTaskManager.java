@@ -363,7 +363,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
                     if (a.getStartTime().equals(b.getStartTime())) {
                         return 0;
                     }
-                    return a.getStartTime().isBefore(b.getStartTime()) ? 1 : -1;
+                    return a.getStartTime().isAfter(b.getStartTime()) ? 1 : -1;
                 })
                 .map(Task::getStartTime)
                 .findFirst();
@@ -375,7 +375,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
                     if (a.getEndTime().equals(b.getEndTime())) {
                         return 0;
                     }
-                    return a.getEndTime().isAfter(b.getEndTime()) ? 1 : -1;
+                    return a.getEndTime().isBefore(b.getEndTime()) ? 1 : -1;
                 })
                 .map(Task::getEndTime)
                 .findFirst();
