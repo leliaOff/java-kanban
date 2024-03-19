@@ -36,24 +36,14 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
 
     protected IHistoryManager historyManager;
 
-    protected TreeSet<Task> prioritizedTasks;
+    protected PrioritizedTasksManager prioritizedTasksManager;
 
     public InMemoryTaskManager() {
         this.tasks = new HashMap<>();
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();
         this.historyManager = new InMemoryHistoryManager();
-
-        Comparator<Task> prioritizedTasksComparator = new Comparator<>() {
-            @Override
-            public int compare(Task a, Task b) {
-                if (a.getStartTime().equals(b.getStartTime())) {
-                    return 0;
-                }
-                return a.getStartTime().isBefore(b.getStartTime()) ? 1 : -1;
-            }
-        };
-        this.prioritizedTasks = new TreeSet<>(prioritizedTasksComparator);
+        this.prioritizedTasksManager = new PrioritizedTasksManager();
     }
 
     /**
@@ -73,7 +63,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public ArrayList<Task> getPrioritizedTasks() {
-        return new ArrayList<>(this.prioritizedTasks);
+        return this.prioritizedTasksManager.getAll();
     }
 
     /**
@@ -132,8 +122,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
             this.historyManager.remove(task.getId());
         }
         this.tasks.clear();
-
-        this.removeByTypeFromPrioritizedTasks(Type.TASK);
+        this.prioritizedTasksManager.removeAllTasks();
     }
 
     /**
@@ -149,8 +138,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
             this.historyManager.remove(epic.getId());
         }
         this.epics.clear();
-
-        this.removeByTypeFromPrioritizedTasks(Type.EPIC);
+        this.prioritizedTasksManager.removeAllEpics();
     }
 
     /**
@@ -166,8 +154,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
             epic.getValue().removeAllSubtasks();
             this.refreshEpic(epic.getValue());
         }
-
-        this.removeByTypeFromPrioritizedTasks(Type.SUBTASK);
+        this.prioritizedTasksManager.removeAllSubtasks();
     }
 
     /**
@@ -182,12 +169,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
         }
         epic.removeAllSubtasks();
         this.refreshEpic(epic);
-
-        this.removeAllFromPrioritizedTasks(this.prioritizedTasks.stream()
-                .filter(task -> task.getType().equals(Type.SUBTASK))
-                .map(task -> (Subtask)task)
-                .filter(task -> task.getEpicId() == epic.getId())
-                .collect(Collectors.toSet()));
+        this.prioritizedTasksManager.removeAllSubtasks(epic.getId());
     }
 
     /**
@@ -243,7 +225,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
         task.setId(sequenceId);
         this.tasks.put(sequenceId, task);
         increaseSequenceId();
-        this.addPrioritizedTasks(task);
+        this.prioritizedTasksManager.add(task);
     }
 
     /**
@@ -254,7 +236,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
         epic.setId(sequenceId);
         this.epics.put(sequenceId, epic);
         increaseSequenceId();
-        this.addPrioritizedTasks(epic);
+        this.prioritizedTasksManager.add(epic);
     }
 
     /**
@@ -268,7 +250,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
         epic.addSubtask(sequenceId);
         this.refreshEpic(epic);
         increaseSequenceId();
-        this.addPrioritizedTasks(subtask);
+        this.prioritizedTasksManager.add(subtask);
     }
 
     /**
@@ -302,9 +284,8 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     @Override
     public void removeTask(int id) {
         this.historyManager.remove(id);
+        this.prioritizedTasksManager.remove(this.tasks.get(id));
         this.tasks.remove(id);
-
-        removeFromPrioritizedTasks(id);
     }
 
     /**
@@ -315,9 +296,8 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
         Epic epic = this.getEpic(id);
         this.removeAllSubtasksByEpic(epic);
         this.historyManager.remove(id);
+        this.prioritizedTasksManager.remove(this.epics.get(id));
         this.epics.remove(id);
-
-        removeFromPrioritizedTasks(id);
     }
 
     /**
@@ -329,33 +309,8 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
         Epic epic = this.getEpic(subtask.getEpicId());
         epic.removeSubtask(id);
         this.historyManager.remove(id);
+        this.prioritizedTasksManager.remove(this.subtasks.get(id));
         this.subtasks.remove(id);
-
-        removeFromPrioritizedTasks(id);
-    }
-
-    protected void addPrioritizedTasks(Task task) {
-        if (task.getStartTime() == null) {
-            return;
-        }
-        this.prioritizedTasks.add(task);
-    }
-
-    protected void removeFromPrioritizedTasks(int id) {
-        Optional<Task> removed = this.prioritizedTasks.stream()
-                .filter(task -> task.getId() == id)
-                .findFirst();
-        removed.ifPresent(task -> this.prioritizedTasks.remove(task));
-    }
-
-    protected void removeByTypeFromPrioritizedTasks(Type type) {
-        removeAllFromPrioritizedTasks(this.prioritizedTasks.stream()
-                .filter(task -> task.getType().equals(type))
-                .collect(Collectors.toSet()));
-    }
-
-    protected void removeAllFromPrioritizedTasks(Set<Task> removed) {
-        this.prioritizedTasks.removeAll(removed);
     }
 
     /**
@@ -398,7 +353,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
             epic.setEndTime(null);
             return;
         }
-        
+
         Optional<LocalDateTime> startTime = subtasks.stream()
                 .filter(subtask -> subtask.getStartTime() != null)
                 .sorted((a, b) -> {
