@@ -2,7 +2,6 @@ package kanban.manager;
 
 import config.tests.App;
 import kanban.manager.exceptions.ManagerDeleteException;
-import kanban.manager.exceptions.ManagerIOException;
 import kanban.task.Epic;
 import kanban.task.Subtask;
 import kanban.task.Task;
@@ -10,39 +9,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 
-class FileBackedTaskManagerTest {
-
-    private ArrayList<Task> tasks;
-    private ArrayList<Epic> epics;
-    private ArrayList<Subtask> subtasks;
-
-    private FileBackedTaskManager taskManager;
-
-    private void createTask(String name, String description) {
-        Task task = new Task(name, description);
-        taskManager.addTask(task);
-        tasks.add(task);
-    }
-
-    private Epic createEpic(String name, String description) {
-        Epic epic = new Epic(name, description);
-        taskManager.addEpic(epic);
-        epics.add(epic);
-        return epic;
-    }
-
-    private void createSubtask(String name, String description, Epic epic) {
-        Subtask subtask = new Subtask(name, description);
-        taskManager.addSubtaskByEpic(subtask, epic);
-        subtasks.add( subtask);
-    }
-
+class FileBackedTaskManagerTest extends TaskManagerTest<FileBackedTaskManager> {
     @BeforeEach
     public void beforeEach() {
         taskManager = new FileBackedTaskManager(
@@ -69,24 +41,6 @@ class FileBackedTaskManagerTest {
         } catch (IOException exception) {
             throw new ManagerDeleteException(exception.getMessage());
         }
-    }
-
-    @Test
-    void getTasks() {
-        ArrayList<Task> tasks = taskManager.getTasks();
-        Assertions.assertEquals(2, tasks.size());
-    }
-
-    @Test
-    void getEpics() {
-        ArrayList<Epic> epics = taskManager.getEpics();
-        Assertions.assertEquals(2, epics.size());
-    }
-
-    @Test
-    void getSubtasks() {
-        ArrayList<Subtask> subtasks = taskManager.getSubtasks();
-        Assertions.assertEquals(3, subtasks.size());
     }
 
     @Test
