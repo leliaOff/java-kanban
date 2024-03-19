@@ -8,6 +8,7 @@ import kanban.task.Subtask;
 import kanban.task.Task;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements ITaskManager<Integer> {
 
@@ -90,14 +91,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public ArrayList<Subtask> getSubtaskByEpic(Epic epic) {
-        ArrayList<Subtask> subtasks = this.getSubtasks();
-        ArrayList<Subtask> epicSubtasks = new ArrayList<>();
-        for (Subtask subtask : subtasks) {
-            if (subtask.getEpicId() == epic.getId()) {
-                epicSubtasks.add(subtask);
-            }
-        }
-        return epicSubtasks;
+        return this.getSubtasks().stream()
+                .filter(subtask -> subtask.getEpicId() == epic.getId())
+                .collect(Collectors.toCollection(ArrayList::new));
     }
 
     /**
@@ -115,9 +111,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void removeAllTasks() {
-        for (Task task : this.tasks.values()) {
-            this.historyManager.remove(task.getId());
-        }
+        this.tasks.values().forEach(task -> this.historyManager.remove(task.getId()));
         this.tasks.clear();
         this.prioritizedTasksManager.removeAllTasks();
     }
@@ -127,13 +121,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void removeAllEpics() {
-        for (Task subtask : this.subtasks.values()) {
-            this.historyManager.remove(subtask.getId());
-        }
+        this.subtasks.values().forEach(subtask -> this.historyManager.remove(subtask.getId()));
         this.subtasks.clear();
-        for (Task epic : this.epics.values()) {
-            this.historyManager.remove(epic.getId());
-        }
+        this.epics.values().forEach(epic -> this.historyManager.remove(epic.getId()));
         this.epics.clear();
         this.prioritizedTasksManager.removeAllEpics();
     }
@@ -143,14 +133,12 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
      */
     @Override
     public void removeAllSubtasks() {
-        for (Task subtask : this.subtasks.values()) {
-            this.historyManager.remove(subtask.getId());
-        }
+        this.subtasks.values().forEach(subtask -> this.historyManager.remove(subtask.getId()));
         this.subtasks.clear();
-        for (Map.Entry<Integer, Epic> epic : this.epics.entrySet()) {
-            epic.getValue().removeAllSubtasks();
-            this.refreshEpic(epic.getValue());
-        }
+        this.epics.forEach((key, value) -> {
+            value.removeAllSubtasks();
+            this.refreshEpic(value);
+        });
         this.prioritizedTasksManager.removeAllSubtasks();
     }
 
@@ -160,10 +148,10 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     @Override
     public void removeAllSubtasksByEpic(Epic epic) {
         ArrayList<Subtask> subtasks = this.getSubtaskByEpic(epic);
-        for (Subtask subtask : subtasks) {
+        subtasks.forEach(subtask -> {
             this.historyManager.remove(subtask.getId());
             this.subtasks.remove(subtask.getId());
-        }
+        });
         epic.removeAllSubtasks();
         this.refreshEpic(epic);
         this.prioritizedTasksManager.removeAllSubtasks(epic.getId());
@@ -345,11 +333,11 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
             epic.setStatusNew();
             return;
         }
-        if (subtasks.size() == this.getEpicSubtasksByStatus(epic, Status.NEW).size()) {
+        if (this.getSubtaskByEpic(epic).stream().allMatch(subtask -> subtask.getStatus().equals(Status.NEW))) {
             epic.setStatusNew();
             return;
         }
-        if (subtasks.size() == this.getEpicSubtasksByStatus(epic, Status.DONE).size()) {
+        if (this.getSubtaskByEpic(epic).stream().allMatch(subtask -> subtask.getStatus().equals(Status.DONE))) {
             epic.setStatusDone();
             return;
         }
@@ -392,20 +380,6 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
                 .map(Task::getEndTime)
                 .findFirst();
         epic.setEndTime(endTime.orElse(null));
-    }
-
-    /**
-     * Получить список подзадач эпика в опреденном статусе
-     */
-    private ArrayList<Subtask> getEpicSubtasksByStatus(Epic epic, Status status) {
-        ArrayList<Subtask> subtasks = this.getSubtaskByEpic(epic);
-        ArrayList<Subtask> subtasksByStatus = new ArrayList<>();
-        for (Subtask subtask : subtasks) {
-            if (subtask.getStatus() == status) {
-                subtasksByStatus.add(subtask);
-            }
-        }
-        return subtasksByStatus;
     }
 
     /**

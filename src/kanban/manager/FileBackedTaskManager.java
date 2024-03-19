@@ -196,18 +196,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
      */
     private void save() {
         try (FileWriter writer = new FileWriter(this.filename)) {
-            // Задачи
-            for (Task task : this.getTasks()) {
-                writer.write(task.toString());
-            }
-            // Эпики
-            for (Task task : this.getEpics()) {
-                writer.write(task.toString());
-            }
-            // Подзадачи
-            for (Task task : this.getSubtasks()) {
-                writer.write(task.toString());
-            }
+            this.getTasks().forEach(task -> {
+                try {
+                    writer.write(task.toString());
+                } catch (IOException e) {
+                    System.out.println("Не удалось сохранить задачу: " + e.getMessage());
+                }
+            });
+            this.getEpics().forEach(task -> {
+                try {
+                    writer.write(task.toString());
+                } catch (IOException e) {
+                    System.out.println("Не удалось сохранить эпик: " + e.getMessage());
+                }
+            });
+            this.getSubtasks().forEach(task -> {
+                try {
+                    writer.write(task.toString());
+                } catch (IOException e) {
+                    System.out.println("Не удалось сохранить подзадачу: " + e.getMessage());
+                }
+            });
 
         } catch (IOException exception) {
             throw new ManagerSaveException(this.filename);
