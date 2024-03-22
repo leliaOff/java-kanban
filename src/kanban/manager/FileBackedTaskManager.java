@@ -1,5 +1,6 @@
 package kanban.manager;
 
+import kanban.manager.exceptions.ManagerRestoreException;
 import kanban.manager.exceptions.ManagerSaveException;
 import kanban.manager.history.FileBackedHistoryManager;
 import kanban.task.Epic;
@@ -187,7 +188,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
             }
             bufferedReader.close();
         } catch (Throwable exception) {
-            System.out.printf("Во время чтения из файла %s произошла ошибка\n", this.filename);
+            throw new ManagerRestoreException(this.filename);
         }
     }
 
@@ -200,21 +201,21 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
                 try {
                     writer.write(task.toString());
                 } catch (IOException e) {
-                    System.out.println("Не удалось сохранить задачу: " + e.getMessage());
+                    throw new ManagerSaveException("Не удалось сохранить задачу: " + e.getMessage());
                 }
             });
             this.getEpics().forEach(task -> {
                 try {
                     writer.write(task.toString());
                 } catch (IOException e) {
-                    System.out.println("Не удалось сохранить эпик: " + e.getMessage());
+                    throw new ManagerSaveException("Не удалось сохранить эпик: " + e.getMessage());
                 }
             });
             this.getSubtasks().forEach(task -> {
                 try {
                     writer.write(task.toString());
                 } catch (IOException e) {
-                    System.out.println("Не удалось сохранить подзадачу: " + e.getMessage());
+                    throw new ManagerSaveException("Не удалось сохранить подзадачу: " + e.getMessage());
                 }
             });
 

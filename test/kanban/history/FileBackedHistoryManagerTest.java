@@ -3,7 +3,6 @@ package kanban.history;
 import config.tests.App;
 import kanban.manager.exceptions.ManagerDeleteException;
 import kanban.manager.history.FileBackedHistoryManager;
-import kanban.manager.history.InMemoryHistoryManager;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 
