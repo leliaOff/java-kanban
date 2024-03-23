@@ -1,6 +1,6 @@
 package kanban.manager;
 
-import kanban.manager.exceptions.ManagerIOException;
+import kanban.manager.exceptions.ManagerRestoreException;
 import kanban.manager.exceptions.ManagerSaveException;
 import kanban.manager.history.FileBackedHistoryManager;
 import kanban.task.Epic;
@@ -188,7 +188,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
             }
             bufferedReader.close();
         } catch (Throwable exception) {
-            System.out.printf("Во время чтения из файла %s произошла ошибка\n", this.filename);
+            throw new ManagerRestoreException(this.filename);
         }
     }
 
@@ -197,18 +197,27 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
      */
     private void save() {
         try (FileWriter writer = new FileWriter(this.filename)) {
-            // Задачи
-            for (Task task : this.getTasks()) {
-                writer.write(task.toString());
-            }
-            // Эпики
-            for (Task task : this.getEpics()) {
-                writer.write(task.toString());
-            }
-            // Подзадачи
-            for (Task task : this.getSubtasks()) {
-                writer.write(task.toString());
-            }
+            this.getTasks().forEach(task -> {
+                try {
+                    writer.write(task.toString());
+                } catch (IOException e) {
+                    throw new ManagerSaveException("Не удалось сохранить задачу: " + e.getMessage());
+                }
+            });
+            this.getEpics().forEach(task -> {
+                try {
+                    writer.write(task.toString());
+                } catch (IOException e) {
+                    throw new ManagerSaveException("Не удалось сохранить эпик: " + e.getMessage());
+                }
+            });
+            this.getSubtasks().forEach(task -> {
+                try {
+                    writer.write(task.toString());
+                } catch (IOException e) {
+                    throw new ManagerSaveException("Не удалось сохранить подзадачу: " + e.getMessage());
+                }
+            });
 
         } catch (IOException exception) {
             throw new ManagerSaveException(this.filename);

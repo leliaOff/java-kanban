@@ -2,25 +2,27 @@ package kanban.task;
 
 import kanban.manager.enums.Status;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 public class Epic extends Task {
 
-    /** Список ID подзадач */
+    /**
+     * Список ID подзадач
+     */
     private final ArrayList<Integer> subtaskIds;
 
     /**
-     * construct
-     *
+     * Время окончания выполнения задачи
      */
+    protected LocalDateTime endTime;
+
     public Epic(String title, String description) {
         super(title, description);
         this.subtaskIds = new ArrayList<>();
     }
 
-    /**
-     * construct
-     */
     public Epic(String line) {
         super(line);
         this.subtaskIds = new ArrayList<>();
@@ -29,6 +31,20 @@ public class Epic extends Task {
     @Override
     public void setStatus(Status status) {
 
+    }
+
+    @Override
+    public Duration getDuration() {
+        return Duration.between(this.startTime, this.endTime);
+    }
+
+    public void setEndTime(LocalDateTime endTime) {
+        this.endTime = endTime;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return this.endTime;
     }
 
     public void setStatusNew() {

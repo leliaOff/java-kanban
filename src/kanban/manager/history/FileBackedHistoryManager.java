@@ -1,6 +1,7 @@
 package kanban.manager.history;
 
 import kanban.manager.exceptions.ManagerIOException;
+import kanban.manager.exceptions.ManagerRestoreException;
 import kanban.manager.exceptions.ManagerSaveException;
 import kanban.task.Epic;
 import kanban.task.Subtask;
@@ -66,7 +67,7 @@ public class FileBackedHistoryManager extends InMemoryHistoryManager implements 
             }
             bufferedReader.close();
         } catch (Throwable exception) {
-            System.out.printf("Во время чтения из файла %s произошла ошибка\n", this.filename);
+            throw new ManagerRestoreException(this.filename);
         }
     }
 
