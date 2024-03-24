@@ -6,6 +6,7 @@ import kanban.task.Task;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 public class PrioritizedHandler extends AbstractHandler {
     @Override
@@ -18,6 +19,7 @@ public class PrioritizedHandler extends AbstractHandler {
     }
 
     protected boolean isValid(String method, String path) {
-        return true;
+        return Objects.equals(method, "GET") &&
+                Objects.equals(path, "/prioritized");
     }
 }
