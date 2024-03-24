@@ -13,6 +13,7 @@ public class HttpTaskServer {
             httpServer.bind(new InetSocketAddress(PORT), 0);
 
             httpServer.createContext("/history", new HistoryHandler());
+            httpServer.createContext("/prioritized", new PrioritizedHandler());
 
             httpServer.start(); // запускаем сервер
             System.out.println("HTTP-сервер запущен на " + PORT + " порту");
