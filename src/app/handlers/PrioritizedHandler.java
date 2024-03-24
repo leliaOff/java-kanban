@@ -6,20 +6,19 @@ import kanban.task.Task;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Objects;
 
 public class PrioritizedHandler extends AbstractHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        if (isInvalid(httpExchange.getRequestMethod(), httpExchange.getRequestURI().getPath())) {
-            writeResponse(httpExchange, "Неверный адрес", 404);
+        super.handle(httpExchange);
+        if (requestMethod.equals("GET") && requestPath.equals("/prioritized")) {
+            index();
         }
-        ArrayList<Task> prioritize = Managers.getInstance().getPrioritizedTasks();
-        writeResponse(httpExchange, gson.toJson(prioritize), 200);
+        writeResponse(requestExchange, "Неверный адрес", 404);
     }
 
-    protected boolean isInvalid(String method, String path) {
-        return !Objects.equals(method, "GET") ||
-                !Objects.equals(path, "/prioritized");
+    private void index() throws IOException {
+        ArrayList<Task> prioritize = Managers.getInstance().getPrioritizedTasks();
+        writeResponse(requestExchange, gson.toJson(prioritize), 200);
     }
 }
