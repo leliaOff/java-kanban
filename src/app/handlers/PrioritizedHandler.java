@@ -11,15 +11,15 @@ import java.util.Objects;
 public class PrioritizedHandler extends AbstractHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        if (!isValid(httpExchange.getRequestMethod(), httpExchange.getRequestURI().getPath())) {
+        if (isInvalid(httpExchange.getRequestMethod(), httpExchange.getRequestURI().getPath())) {
             writeResponse(httpExchange, "Неверный адрес", 404);
         }
         ArrayList<Task> prioritize = Managers.getInstance().getPrioritizedTasks();
         writeResponse(httpExchange, gson.toJson(prioritize), 200);
     }
 
-    protected boolean isValid(String method, String path) {
-        return Objects.equals(method, "GET") &&
-                Objects.equals(path, "/prioritized");
+    protected boolean isInvalid(String method, String path) {
+        return !Objects.equals(method, "GET") ||
+                !Objects.equals(path, "/prioritized");
     }
 }

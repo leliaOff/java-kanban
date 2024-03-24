@@ -12,15 +12,15 @@ import java.util.Objects;
 public class HistoryHandler extends AbstractHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
-        if (!isValid(httpExchange.getRequestMethod(), httpExchange.getRequestURI().getPath())) {
+        if (isInvalid(httpExchange.getRequestMethod(), httpExchange.getRequestURI().getPath())) {
             writeResponse(httpExchange, "Неверный адрес", 404);
         }
         ArrayList<Task> history = Managers.getInstance().getHistory();
         writeResponse(httpExchange, gson.toJson(history), 200);
     }
 
-    protected boolean isValid(String method, String path) {
-        return Objects.equals(method, "GET") &&
-                Objects.equals(path, "/history");
+    protected boolean isInvalid(String method, String path) {
+        return !Objects.equals(method, "GET") ||
+                !Objects.equals(path, "/history");
     }
 }
