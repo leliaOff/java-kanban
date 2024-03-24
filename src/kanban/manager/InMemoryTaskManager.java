@@ -15,7 +15,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     /**
      * Последовательность ИД
      */
-    private static int sequenceId = 1;
+    protected static int sequenceId = 1;
 
     /**
      * Список задач
@@ -386,7 +386,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     /**
      * Увеличить последовательность ИД
      */
-    private static void increaseSequenceId() {
+    protected static void increaseSequenceId() {
         sequenceId++;
     }
 
