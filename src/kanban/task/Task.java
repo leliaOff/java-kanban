@@ -42,7 +42,7 @@ public class Task {
      */
     protected LocalDateTime startTime;
 
-    protected final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    protected transient final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public Task(String title, String description) {
         this.title = title;
