@@ -1,6 +1,5 @@
 package app.requests;
 
-import app.Validator;
 import app.services.GsonService;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -10,30 +9,42 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-public class StoreTaskRequest extends UpdateTaskRequest {
+public class UpdateSubtaskRequest extends AbstractRequest {
+    protected Optional<String> title;
+    protected Optional<String> description;
+    protected Optional<Integer> epicId;
+    protected Optional<LocalDateTime> startTime;
+    protected Optional<Duration> duration;
+    protected Optional<Status> status;
 
-    public StoreTaskRequest(Optional<JsonElement> requestBody) {
+    public UpdateSubtaskRequest(Optional<JsonElement> requestBody) {
         super(requestBody);
+        this.title = Optional.empty();
+        this.description = Optional.empty();
+        this.startTime = Optional.empty();
+        this.duration = Optional.empty();
+        this.status = Optional.empty();
+        this.epicId = Optional.empty();
+        parse();
     }
 
     protected void parse() {
         if (requestBody.isEmpty()) {
-            this.validateResult.add("Не передано обязательное поле: title");
-            this.validateResult.add("Не передано обязательное поле: description");
+            this.validateResult.add("Запрос пуст");
             return;
         }
         JsonObject request = requestBody.get().getAsJsonObject();
 
-        if (request.get("title") == null || request.get("title").getAsString().isEmpty()) {
-            this.validateResult.add("Не передано обязательное поле: title");
-        } else {
+        if (request.get("title") != null && !request.get("title").getAsString().isEmpty()) {
             this.title = Optional.of(request.get("title").getAsString());
         }
 
-        if (request.get("description") == null || request.get("description").getAsString().isEmpty()) {
-            this.validateResult.add("Не передано обязательное поле: description");
-        } else {
+        if (request.get("description") != null && !request.get("description").getAsString().isEmpty()) {
             this.description = Optional.of(request.get("description").getAsString());
+        }
+
+        if (request.get("epicId") != null && request.get("epicId").getAsInt() > 0) {
+            this.epicId = Optional.of(request.get("epicId").getAsInt());
         }
 
         if (request.get("startTime") != null && !request.get("startTime").getAsString().isEmpty()) {
@@ -59,5 +70,29 @@ public class StoreTaskRequest extends UpdateTaskRequest {
                 this.validateResult.add("Поле status должно принимать одно из допустимых значений: [NEW, IN_PROGRESS, DONE]");
             }
         }
+    }
+
+    public Optional<String> getTitle() {
+        return title;
+    }
+
+    public Optional<String> getDescription() {
+        return description;
+    }
+
+    public Optional<Integer> getEpicId() {
+        return epicId;
+    }
+
+    public Optional<LocalDateTime> getStartTime() {
+        return startTime;
+    }
+
+    public Optional<Duration> getDuration() {
+        return duration;
+    }
+
+    public Optional<Status> getStatus() {
+        return status;
     }
 }

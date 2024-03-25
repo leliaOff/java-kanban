@@ -4,7 +4,6 @@ import app.requests.StoreTaskRequest;
 import app.requests.UpdateTaskRequest;
 import app.services.Managers;
 import com.sun.net.httpserver.HttpExchange;
-import kanban.manager.enums.Status;
 import kanban.task.Task;
 
 import java.io.IOException;
@@ -12,34 +11,32 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class TasksHandler extends AbstractHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         super.handle(httpExchange);
-        Optional<Integer> taskId = getIntegerParameter("/tasks/(\\d+)");
+        Optional<Integer> id = getIntegerParameter("/tasks/(\\d+)");
         switch (requestMethod) {
             case "GET":
                 if (requestPath.equals("/tasks")) {
                     index();
                 }
-                if (taskId.isPresent()) {
-                    get(taskId.get());
+                if (id.isPresent()) {
+                    get(id.get());
                 }
                 break;
             case "POST":
                 if (requestPath.equals("/tasks")) {
                     store();
                 }
-                if (taskId.isPresent()) {
-                    update(taskId.get());
+                if (id.isPresent()) {
+                    update(id.get());
                 }
                 break;
             case "DELETE":
-                if (taskId.isPresent()) {
-                    delete(taskId.get());
+                if (id.isPresent()) {
+                    delete(id.get());
                 }
                 break;
         }

@@ -13,6 +13,7 @@ public class HttpTaskServer {
             httpServer.bind(new InetSocketAddress(PORT), 0);
 
             httpServer.createContext("/tasks", new TasksHandler());
+            httpServer.createContext("/subtasks", new SubtasksHandler());
             httpServer.createContext("/history", new HistoryHandler());
             httpServer.createContext("/prioritized", new PrioritizedHandler());
 

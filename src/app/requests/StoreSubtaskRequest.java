@@ -1,6 +1,5 @@
 package app.requests;
 
-import app.Validator;
 import app.services.GsonService;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -10,9 +9,9 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-public class StoreTaskRequest extends UpdateTaskRequest {
+public class StoreSubtaskRequest extends UpdateSubtaskRequest {
 
-    public StoreTaskRequest(Optional<JsonElement> requestBody) {
+    public StoreSubtaskRequest(Optional<JsonElement> requestBody) {
         super(requestBody);
     }
 
@@ -20,6 +19,7 @@ public class StoreTaskRequest extends UpdateTaskRequest {
         if (requestBody.isEmpty()) {
             this.validateResult.add("Не передано обязательное поле: title");
             this.validateResult.add("Не передано обязательное поле: description");
+            this.validateResult.add("Не передано обязательное поле: epicId");
             return;
         }
         JsonObject request = requestBody.get().getAsJsonObject();
@@ -34,6 +34,12 @@ public class StoreTaskRequest extends UpdateTaskRequest {
             this.validateResult.add("Не передано обязательное поле: description");
         } else {
             this.description = Optional.of(request.get("description").getAsString());
+        }
+
+        if (request.get("epicId") == null || request.get("epicId").getAsInt() <= 0) {
+            this.validateResult.add("Не передано обязательное поле: epicId");
+        } else {
+            this.epicId = Optional.of(request.get("epicId").getAsInt());
         }
 
         if (request.get("startTime") != null && !request.get("startTime").getAsString().isEmpty()) {

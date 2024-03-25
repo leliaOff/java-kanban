@@ -49,7 +49,7 @@ public class UpdateTaskRequest extends AbstractRequest {
             }
         }
 
-        if (request.get("duration") != null && request.get("duration").getAsInt() != 0) {
+        if (request.get("duration") != null && request.get("duration").getAsInt() > 0) {
             try {
                 this.duration = Optional.of(GsonService.get().fromJson(request.get("duration").toString(), Duration.class));
             } catch (Throwable throwable) {
