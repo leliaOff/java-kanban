@@ -171,7 +171,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
                     case EPIC:
                         Epic epic = new Epic(line);
                         this.epics.put(epic.getId(), epic);
-                        sequenceId = epic.getId();
+                        sequenceId = Math.max(sequenceId, epic.getId());
                         break;
                     case SUBTASK:
                         Subtask subtask = new Subtask(line);
@@ -180,13 +180,13 @@ public class FileBackedTaskManager extends InMemoryTaskManager implements ITaskM
                             continue;
                         }
                         this.subtasks.put(subtask.getId(), subtask);
-                        sequenceId = subtask.getId();
                         subtaskEpic.addSubtask(subtask.getId());
+                        sequenceId = Math.max(sequenceId, subtask.getId());
                         break;
                     default:
                         Task task = new Task(line);
                         this.tasks.put(task.getId(), task);
-                        sequenceId = task.getId();
+                        sequenceId = Math.max(sequenceId, task.getId());
                 }
             }
             bufferedReader.close();

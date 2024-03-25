@@ -80,11 +80,6 @@ public class Task {
         this.id = id;
     }
 
-    /**
-     * Получить ИД задачи
-     *
-     * @return int ИД задачи
-     */
     public int getId() {
         return this.id;
     }
@@ -93,38 +88,26 @@ public class Task {
         this.status = status;
     }
 
-    /**
-     * Получить статус
-     *
-     * @return Status Статус
-     */
     public Status getStatus() {
         return this.status;
     }
 
-    /**
-     * Получить Наименование задачи
-     *
-     * @return String Наименование задачи
-     */
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public String getTitle() {
         return this.title;
     }
 
-    /**
-     * Получить Описание задачи
-     *
-     * @return String Описание задачи
-     */
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     public String getDescription() {
         return this.description;
     }
 
-    /**
-     * Возвращает тип задачи: задача, эпик или подзадача
-     *
-     * @return Тип задачи
-     */
     public Type getType() {
         if (this instanceof Epic) {
             return Type.EPIC;
@@ -139,11 +122,6 @@ public class Task {
         this.duration = duration;
     }
 
-    /**
-     * Возвращает продолжительность задачи
-     *
-     * @return Duration Продолжительность задачи
-     */
     public Duration getDuration() {
         return this.duration;
     }
@@ -152,20 +130,10 @@ public class Task {
         this.startTime = startTime;
     }
 
-    /**
-     * Возвращает время начала выполнения задачи
-     *
-     * @return LocalDateTime Время начала выполнения задачи
-     */
     public LocalDateTime getStartTime() {
         return this.startTime;
     }
 
-    /**
-     * Возвращает время окончания выполнения задачи
-     *
-     * @return LocalDateTime Время окончания выполнения задачи
-     */
     public LocalDateTime getEndTime() {
         if (this.startTime == null) {
             return null;
