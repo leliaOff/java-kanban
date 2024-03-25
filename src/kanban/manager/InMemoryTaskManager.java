@@ -314,7 +314,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
             this.historyManager.remove(id);
             this.prioritizedTasksManager.remove(this.subtasks.get(id));
             this.subtasks.remove(id);
+            this.refreshEpic(epic);
         });
+
     }
 
     /**
