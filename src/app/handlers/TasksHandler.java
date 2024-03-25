@@ -19,7 +19,7 @@ public class TasksHandler extends AbstractHandler {
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {
         super.handle(httpExchange);
-        Optional<Integer> taskId = getTaskId();
+        Optional<Integer> taskId = getIntegerParameter("/tasks/(\\d+)");
         switch (requestMethod) {
             case "GET":
                 if (requestPath.equals("/tasks")) {
@@ -44,17 +44,6 @@ public class TasksHandler extends AbstractHandler {
                 break;
         }
         writeResponse(requestExchange, "Неверный адрес", 404);
-    }
-
-    /**
-     * Получить ИД задачи
-     *
-     * @return ИД задачи
-     */
-    private Optional<Integer> getTaskId() {
-        Pattern pattern = Pattern.compile("/tasks/(\\d+)");
-        Matcher matcher = pattern.matcher(requestPath);
-        return matcher.matches() ? Optional.of(Integer.parseInt(matcher.group(1))) : Optional.empty();
     }
 
     /**

@@ -19,6 +19,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class AbstractHandler implements HttpHandler {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
@@ -51,6 +53,17 @@ public abstract class AbstractHandler implements HttpHandler {
         } catch (Throwable throwable) {
             requestBody = Optional.empty();
         }
+    }
+
+    /**
+     * Получить параметр запроса
+     *
+     * @return параметр запроса
+     */
+    protected Optional<Integer> getIntegerParameter(String patten) {
+        Pattern pattern = Pattern.compile(patten);
+        Matcher matcher = pattern.matcher(requestPath);
+        return matcher.matches() ? Optional.of(Integer.parseInt(matcher.group(1))) : Optional.empty();
     }
 
     protected void writeResponse(HttpExchange exchange, int responseCode) throws IOException {
