@@ -47,7 +47,7 @@ public class TasksHandler extends AbstractHandler {
      * Список всех задач
      */
     private void index() throws IOException {
-        ArrayList<Task> tasks = Managers.getInstance().getTasks();
+        ArrayList<Task> tasks = manager.getTasks();
         writeResponse(requestExchange, gson.toJson(tasks), 200);
     }
 
@@ -57,7 +57,7 @@ public class TasksHandler extends AbstractHandler {
      * @param id ИД задачи
      */
     private void get(int id) throws IOException {
-        Optional<Task> taskOptional = Managers.getInstance().getTask(id);
+        Optional<Task> taskOptional = manager.getTask(id);
         if (taskOptional.isEmpty()) {
             writeResponse(requestExchange, "Данные не найдены", 404);
             return;
@@ -81,13 +81,13 @@ public class TasksHandler extends AbstractHandler {
 
         Task task = startTime.isPresent() && duration.isPresent() ? new Task(title.get(), description.get(), startTime.get(), duration.get())
                 : new Task(title.get(), description.get());
-        Managers.getInstance().addTask(task);
+        manager.addTask(task);
         if (task.getId() == 0) {
             writeResponse(requestExchange, "Задача пересекается с одной из текущих задач", 406);
             return;
         }
         request.getStatus().ifPresent(task::setStatus);
-        Managers.getInstance().updateTask(task);
+        manager.updateTask(task);
         writeResponse(requestExchange, gson.toJson(task), 200);
     }
 
@@ -97,7 +97,7 @@ public class TasksHandler extends AbstractHandler {
      * @param id ИД задачи
      */
     private void update(int id) throws IOException {
-        Optional<Task> taskOptional = Managers.getInstance().getTask(id);
+        Optional<Task> taskOptional = manager.getTask(id);
         if (taskOptional.isEmpty()) {
             writeResponse(requestExchange, "Данные не найдены", 404);
             return;
@@ -115,7 +115,7 @@ public class TasksHandler extends AbstractHandler {
         request.getStartTime().ifPresent(task::setStartTime);
         request.getDuration().ifPresent(task::setDuration);
         request.getStatus().ifPresent(task::setStatus);
-        Managers.getInstance().updateTask(task);
+        manager.updateTask(task);
         writeResponse(requestExchange, gson.toJson(task), 200);
     }
 
@@ -125,12 +125,12 @@ public class TasksHandler extends AbstractHandler {
      * @param id ИД задачи
      */
     private void delete(int id) throws IOException {
-        Optional<Task> taskOptional = Managers.getInstance().getTask(id);
+        Optional<Task> taskOptional = manager.getTask(id);
         if (taskOptional.isEmpty()) {
             writeResponse(requestExchange, "Данные не найдены", 404);
             return;
         }
-        Managers.getInstance().removeTask(id);
+        manager.removeTask(id);
         writeResponse(requestExchange, 201);
     }
 }

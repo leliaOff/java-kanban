@@ -3,6 +3,7 @@ package app.handlers;
 import app.adapters.DurationAdapter;
 import app.adapters.LocalDateTimeAdapter;
 import app.services.GsonService;
+import app.services.Managers;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
@@ -10,6 +11,7 @@ import com.google.gson.JsonParser;
 import com.sun.net.httpserver.Headers;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+import kanban.manager.ITaskManager;
 
 import java.io.InputStream;
 import java.nio.charset.Charset;
@@ -35,7 +37,11 @@ public abstract class AbstractHandler implements HttpHandler {
 
     protected Optional<JsonElement> requestBody;
 
-    AbstractHandler() {}
+    protected ITaskManager<Integer> manager;
+
+    AbstractHandler() {
+        manager = Managers.getInstance();
+    }
 
     @Override
     public void handle(HttpExchange httpExchange) throws IOException {

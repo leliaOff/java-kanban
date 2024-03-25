@@ -48,7 +48,7 @@ public class EpicsHandler extends AbstractHandler {
      * Список всех эпиков
      */
     private void index() throws IOException {
-        ArrayList<Epic> epics = Managers.getInstance().getEpics();
+        ArrayList<Epic> epics = manager.getEpics();
         writeResponse(requestExchange, gson.toJson(epics), 200);
     }
 
@@ -58,7 +58,7 @@ public class EpicsHandler extends AbstractHandler {
      * @param id ИД эпика
      */
     private void get(int id) throws IOException {
-        Optional<Epic> epicOptional = Managers.getInstance().getEpic(id);
+        Optional<Epic> epicOptional = manager.getEpic(id);
         if (epicOptional.isEmpty()) {
             writeResponse(requestExchange, "Данные не найдены", 404);
             return;
@@ -79,7 +79,7 @@ public class EpicsHandler extends AbstractHandler {
         Optional<String> description = request.getDescription();
 
         Epic epic = new Epic(title.get(), description.get());
-        Managers.getInstance().addEpic(epic);
+        manager.addEpic(epic);
         if (epic.getId() == 0) {
             writeResponse(requestExchange, "Эпик пересекается с одной из текущих задач", 406);
             return;
@@ -93,7 +93,7 @@ public class EpicsHandler extends AbstractHandler {
      * @param id ИД эпика
      */
     private void update(int id) throws IOException {
-        Optional<Epic> epicOptional = Managers.getInstance().getEpic(id);
+        Optional<Epic> epicOptional = manager.getEpic(id);
         if (epicOptional.isEmpty()) {
             writeResponse(requestExchange, "Данные не найдены", 404);
             return;
@@ -108,7 +108,7 @@ public class EpicsHandler extends AbstractHandler {
         Epic epic = epicOptional.get();
         request.getTitle().ifPresent(epic::setTitle);
         request.getDescription().ifPresent(epic::setDescription);
-        Managers.getInstance().updateEpic(epic);
+        manager.updateEpic(epic);
         writeResponse(requestExchange, gson.toJson(epic), 200);
     }
 
@@ -118,12 +118,12 @@ public class EpicsHandler extends AbstractHandler {
      * @param id ИД эпика
      */
     private void delete(int id) throws IOException {
-        Optional<Epic> epicOptional = Managers.getInstance().getEpic(id);
+        Optional<Epic> epicOptional = manager.getEpic(id);
         if (epicOptional.isEmpty()) {
             writeResponse(requestExchange, "Данные не найдены", 404);
             return;
         }
-        Managers.getInstance().removeEpic(id);
+        manager.removeEpic(id);
         writeResponse(requestExchange, 201);
     }
 }

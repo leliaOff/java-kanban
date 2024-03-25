@@ -18,7 +18,7 @@ public class HistoryHandler extends AbstractHandler {
     }
 
     private void index() throws IOException {
-        ArrayList<Task> history = Managers.getInstance().getHistory();
+        ArrayList<Task> history = manager.getHistory();
         writeResponse(requestExchange, gson.toJson(history), 200);
     }
 }

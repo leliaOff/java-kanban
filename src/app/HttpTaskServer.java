@@ -1,3 +1,5 @@
+package app;
+
 import app.handlers.*;
 import com.sun.net.httpserver.HttpServer;
 
@@ -30,6 +32,6 @@ public class HttpTaskServer {
 
     public static void stop() {
         httpServer.stop(0);
-        System.out.println("HTTP-сервер запущен остановлен");
+        System.out.println("HTTP-сервер остановлен");
     }
 }

@@ -18,7 +18,7 @@ public class PrioritizedHandler extends AbstractHandler {
     }
 
     private void index() throws IOException {
-        ArrayList<Task> prioritize = Managers.getInstance().getPrioritizedTasks();
+        ArrayList<Task> prioritize = manager.getPrioritizedTasks();
         writeResponse(requestExchange, gson.toJson(prioritize), 200);
     }
 }

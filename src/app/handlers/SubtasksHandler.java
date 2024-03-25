@@ -55,7 +55,7 @@ public class SubtasksHandler extends AbstractHandler {
      * Список всех подзадач
      */
     private void index() throws IOException {
-        ArrayList<Subtask> subtasks = Managers.getInstance().getSubtasks();
+        ArrayList<Subtask> subtasks = manager.getSubtasks();
         writeResponse(requestExchange, gson.toJson(subtasks), 200);
     }
 
@@ -65,7 +65,7 @@ public class SubtasksHandler extends AbstractHandler {
      * @param id ИД задачи
      */
     private void get(int id) throws IOException {
-        Optional<Subtask> subtaskOptional = Managers.getInstance().getSubtask(id);
+        Optional<Subtask> subtaskOptional = manager.getSubtask(id);
         if (subtaskOptional.isEmpty()) {
             writeResponse(requestExchange, "Данные не найдены", 404);
             return;
@@ -88,7 +88,7 @@ public class SubtasksHandler extends AbstractHandler {
         Optional<LocalDateTime> startTime = request.getStartTime();
         Optional<Duration> duration = request.getDuration();
 
-        Optional<Epic> epicOptional = Managers.getInstance().getEpic(epicId.get());
+        Optional<Epic> epicOptional = manager.getEpic(epicId.get());
         if (epicOptional.isEmpty()) {
             writeResponse(requestExchange, "Не найден эпик с ID = " + epicId.get(), 404);
             return;
@@ -96,13 +96,13 @@ public class SubtasksHandler extends AbstractHandler {
 
         Subtask subtask = startTime.isPresent() && duration.isPresent() ? new Subtask(title.get(), description.get(), startTime.get(), duration.get())
                 : new Subtask(title.get(), description.get());
-        Managers.getInstance().addSubtaskByEpic(subtask, epicOptional.get());
+        manager.addSubtaskByEpic(subtask, epicOptional.get());
         if (subtask.getId() == 0) {
             writeResponse(requestExchange, "Подзадача пересекается с одной из текущих задач", 406);
             return;
         }
         request.getStatus().ifPresent(subtask::setStatus);
-        Managers.getInstance().updateSubtask(subtask);
+        manager.updateSubtask(subtask);
         writeResponse(requestExchange, gson.toJson(subtask), 200);
     }
 
@@ -112,7 +112,7 @@ public class SubtasksHandler extends AbstractHandler {
      * @param id ИД задачи
      */
     private void update(int id) throws IOException {
-        Optional<Subtask> subtaskOptional = Managers.getInstance().getSubtask(id);
+        Optional<Subtask> subtaskOptional = manager.getSubtask(id);
         if (subtaskOptional.isEmpty()) {
             writeResponse(requestExchange, "Данные не найдены", 404);
             return;
@@ -130,7 +130,7 @@ public class SubtasksHandler extends AbstractHandler {
         request.getStartTime().ifPresent(subtask::setStartTime);
         request.getDuration().ifPresent(subtask::setDuration);
         request.getStatus().ifPresent(subtask::setStatus);
-        Managers.getInstance().updateSubtask(subtask);
+        manager.updateSubtask(subtask);
         writeResponse(requestExchange, gson.toJson(subtask), 200);
     }
 
@@ -140,12 +140,12 @@ public class SubtasksHandler extends AbstractHandler {
      * @param id ИД задачи
      */
     private void delete(int id) throws IOException {
-        Optional<Subtask> subtaskOptional = Managers.getInstance().getSubtask(id);
+        Optional<Subtask> subtaskOptional = manager.getSubtask(id);
         if (subtaskOptional.isEmpty()) {
             writeResponse(requestExchange, "Данные не найдены", 404);
             return;
         }
-        Managers.getInstance().removeSubtask(id);
+        manager.removeSubtask(id);
         writeResponse(requestExchange, 201);
     }
 }
