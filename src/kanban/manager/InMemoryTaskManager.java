@@ -297,9 +297,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     @Override
     public void removeEpic(int id) {
         this.getEpic(id).ifPresent(epic -> {
+            this.prioritizedTasksManager.remove(this.epics.get(id));
             this.removeAllSubtasksByEpic(epic);
             this.historyManager.remove(id);
-            this.prioritizedTasksManager.remove(this.epics.get(id));
             this.epics.remove(id);
         });
     }
