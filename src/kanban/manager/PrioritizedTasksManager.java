@@ -13,6 +13,9 @@ public class PrioritizedTasksManager {
         Comparator<Task> prioritizedTasksComparator = new Comparator<>() {
             @Override
             public int compare(Task a, Task b) {
+                if (a.getStartTime() == null || b.getStartTime() == null) {
+                    return 0;
+                }
                 if (a.getStartTime().equals(b.getStartTime())) {
                     return 0;
                 }

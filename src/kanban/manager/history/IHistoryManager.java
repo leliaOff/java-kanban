@@ -3,7 +3,6 @@ package kanban.manager.history;
 import kanban.task.Task;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 
 public interface IHistoryManager {
     /**
@@ -13,6 +12,7 @@ public interface IHistoryManager {
 
     /**
      * Удалить запись из истории
+     *
      * @param id
      */
     public void remove(int id);

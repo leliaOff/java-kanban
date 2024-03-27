@@ -15,7 +15,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     /**
      * Последовательность ИД
      */
-    private static int sequenceId = 1;
+    protected static int sequenceId = 1;
 
     /**
      * Список задач
@@ -297,9 +297,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     @Override
     public void removeEpic(int id) {
         this.getEpic(id).ifPresent(epic -> {
+            this.prioritizedTasksManager.remove(this.epics.get(id));
             this.removeAllSubtasksByEpic(epic);
             this.historyManager.remove(id);
-            this.prioritizedTasksManager.remove(this.epics.get(id));
             this.epics.remove(id);
         });
     }
@@ -314,7 +314,9 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
             this.historyManager.remove(id);
             this.prioritizedTasksManager.remove(this.subtasks.get(id));
             this.subtasks.remove(id);
+            this.refreshEpic(epic);
         });
+
     }
 
     /**
@@ -386,7 +388,7 @@ public class InMemoryTaskManager implements ITaskManager<Integer> {
     /**
      * Увеличить последовательность ИД
      */
-    private static void increaseSequenceId() {
+    protected static void increaseSequenceId() {
         sequenceId++;
     }
 

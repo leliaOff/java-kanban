@@ -5,6 +5,8 @@ import kanban.manager.enums.Status;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class Epic extends Task {
 
@@ -81,6 +83,6 @@ public class Epic extends Task {
      * Удалить подзадачу по ИД
      */
     public void removeSubtask(int id) {
-        this.subtaskIds.remove(id);
+        this.subtaskIds.removeAll(List.of(id));
     }
 }

@@ -37,7 +37,7 @@ public class InMemoryHistoryManager implements IHistoryManager {
         if (!this.map.containsKey(id)) {
             return;
         }
-        Integer index  = this.map.get(id);
+        Integer index = this.map.get(id);
         this.removeNode(this.history.get(index));
         this.map.remove(id);
 
@@ -60,7 +60,7 @@ public class InMemoryHistoryManager implements IHistoryManager {
     }
 
     /**
-     *  Добавить элемент в конец списка
+     * Добавить элемент в конец списка
      */
     private void linkLast(TaskNode node) {
         if (this.tail != null) {
@@ -75,7 +75,7 @@ public class InMemoryHistoryManager implements IHistoryManager {
     }
 
     /**
-     *  Удалить элемент по индексу
+     * Удалить элемент по индексу
      */
     private void removeNode(TaskNode node) {
         this.history.remove(node);
