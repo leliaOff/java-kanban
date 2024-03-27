@@ -5,37 +5,41 @@ import kanban.task.Subtask;
 import kanban.task.Task;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.Optional;
 
-public interface ITaskManager<I>  {
+public interface ITaskManager<I> {
 
     /**
      * Получить список всех задач
+     *
      * @return ArrayList<Task>
      */
     public ArrayList<Task> getTasks();
 
     /**
      * Получить список всех задач в порядке приоритета
+     *
      * @return ArrayList<Task>
      */
     public ArrayList<Task> getPrioritizedTasks();
 
     /**
      * Получить список всех эпиков
+     *
      * @return ArrayList<Epic>
      */
     public ArrayList<Epic> getEpics();
 
     /**
      * Получить список всех подзадач
+     *
      * @return ArrayList<Subtask>
      */
     public ArrayList<Subtask> getSubtasks();
 
     /**
      * Получить список всех подзадач эпика
+     *
      * @return ArrayList<Subtask>
      */
     public ArrayList<Subtask> getSubtaskByEpic(Epic epic);

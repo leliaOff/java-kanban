@@ -227,7 +227,6 @@ public class SubtasksApiTest {
             return  jsonTask.get("id").getAsInt();
         } catch (Throwable e) {
             System.out.println(e.getMessage());
-            // Assertions.fail();
         }
         return 0;
     }
@@ -251,7 +250,6 @@ public class SubtasksApiTest {
             return jsonTask.get("id").getAsInt();
         } catch (Throwable e) {
             System.out.println(e.getMessage());
-            // Assertions.fail();
         }
         return 0;
     }

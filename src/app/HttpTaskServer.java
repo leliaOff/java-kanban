@@ -22,7 +22,7 @@ public class HttpTaskServer {
             httpServer.createContext("/history", new HistoryHandler());
             httpServer.createContext("/prioritized", new PrioritizedHandler());
 
-            httpServer.start(); // запускаем сервер
+            httpServer.start();
             System.out.println("HTTP-сервер запущен на " + PORT + " порту");
 
         } catch (IOException exception) {
